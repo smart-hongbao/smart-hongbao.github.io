@@ -1,4 +1,14 @@
 <html>
+<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+<script type="text/javascript">
+  const provider = await detectEthereumProvider()
+
+  if (provider) {
+    alert("Has provider")
+  } else {
+    alert("No provider")
+  }
+</script>
 <body>
 	hello
 <script>
