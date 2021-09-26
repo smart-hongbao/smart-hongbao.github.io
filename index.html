@@ -5,6 +5,9 @@
 
   if (provider) {
     alert("Has provider")
+       const accounts = await provider.request({method: 'eth_requestAccounts'})
+	  alert(accounts)
+		  
   } else {
     alert("No provider")
   }
@@ -12,37 +15,37 @@
 <body>
 	hello
 <script>
-    window.addEventListener('DOMContentLoaded', async (event) => {
-	alert(window.ethereum)
-	alert(window.web3)
-        if (typeof window.ethereum === 'undefined') {
-	    if (typeof window.web3 !== 'undefined') {
-	       window.ethereum = window.web3
-	    }
-        }
-    })
-
-if (window.ethereum) {
-  handleEthereum();
-} else {
-  window.addEventListener('ethereum#initialized', handleEthereum, {
-    once: true,
-  });
-
-  // If the event is not dispatched by the end of the timeout,
-  // the user probably doesn't have MetaMask installed.
-  setTimeout(handleEthereum, 9000); // 9 seconds
-}
-
-function handleEthereum() {
-  const { ethereum } = window;
-  if (ethereum) {
-    alert('Ethereum successfully detected!');
-    // Access the decentralized web!
-  } else {
-    alert('Please install MetaMask!');
-  }
-}
+//    window.addEventListener('DOMContentLoaded', async (event) => {
+//	alert(window.ethereum)
+//	alert(window.web3)
+//        if (typeof window.ethereum === 'undefined') {
+//	    if (typeof window.web3 !== 'undefined') {
+//	       window.ethereum = window.web3
+//	    }
+//        }
+//    })
+//
+//if (window.ethereum) {
+//  handleEthereum();
+//} else {
+//  window.addEventListener('ethereum#initialized', handleEthereum, {
+//    once: true,
+//  });
+//
+//  // If the event is not dispatched by the end of the timeout,
+//  // the user probably doesn't have MetaMask installed.
+//  setTimeout(handleEthereum, 9000); // 9 seconds
+//}
+//
+//function handleEthereum() {
+//  const { ethereum } = window;
+//  if (ethereum) {
+//    alert('Ethereum successfully detected!');
+//    // Access the decentralized web!
+//  } else {
+//    alert('Please install MetaMask!');
+//  }
+//}
 </script>
 </body>
 </html>
