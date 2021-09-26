@@ -1,4 +1,5 @@
 <html>
+<head>
 <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
 <script type="text/javascript">
 (async function(){
@@ -14,19 +15,20 @@
   }
 })()
 </script>
+</head>
 <body>
 	hello
 <script>
-//    window.addEventListener('DOMContentLoaded', async (event) => {
-//	alert(window.ethereum)
-//	alert(window.web3)
-//        if (typeof window.ethereum === 'undefined') {
-//	    if (typeof window.web3 !== 'undefined') {
-//	       window.ethereum = window.web3
-//	    }
-//        }
-//    })
-//
+    window.addEventListener('DOMContentLoaded', async (event) => {
+	alert(window.ethereum)
+	alert(window.imToken)
+        if (typeof window.ethereum === 'undefined') {
+	    if (typeof window.web3 !== 'undefined') {
+	       window.ethereum = window.web3
+	    }
+        }
+    })
+
 //if (window.ethereum) {
 //  handleEthereum();
 //} else {
