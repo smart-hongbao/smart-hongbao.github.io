@@ -1,0 +1,17 @@
+<html>
+<body>
+	hello
+<script>
+    window.addEventListener('DOMContentLoaded', async (event) => {
+	alert(window.ethereum)
+	alert(window.web3)
+        if (typeof window.ethereum === 'undefined') {
+	    if (typeof window.web3 !== 'undefined') {
+	       window.ethereum = window.web3
+	    }
+        }
+    })
+</script>
+</body>
+</html>
+
