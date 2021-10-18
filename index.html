@@ -1,56 +1,48 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
-<script type="text/javascript">
-(async function(){
-  const provider = await detectEthereumProvider()
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cheques on Blockchain</title>
+  <script src="/ethers-5.4.6.umd.min.js"
+        type="application/javascript"></script>
+  <script src="/enc.js"
+        type="application/javascript"></script>
+  <script type="application/javascript">!function (e) {
+    if ("object" == typeof exports && "undefined" != typeof module) module.exports = e(); else if ("function" == typeof define && define.amd) define([], e); else {
+        ("undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self ? self : this).detectEthereumProvider = e()
+    }
+}((function () {
+    return function ({mustBeMetaMask: e = !1, silent: t = !1, timeout: o = 3e3} = {}) {
+        !function () {
+            if ("boolean" != typeof e) throw new Error("@metamask/detect-provider: Expected option 'mustBeMetaMask' to be a boolean.");
+            if ("boolean" != typeof t) throw new Error("@metamask/detect-provider: Expected option 'silent' to be a boolean.");
+            if ("number" != typeof o) throw new Error("@metamask/detect-provider: Expected option 'timeout' to be a number.")
+        }();
+        let n = !1;
+        return new Promise(i => {
+            function r() {
+                if (n) return;
+                n = !0, window.removeEventListener("ethereum#initialized", r);
+                const {ethereum: o} = window;
+                if (!o || e && !o.isMetaMask) {
+                    const n = e && o ? "Non-MetaMask window.ethereum detected." : "Unable to detect window.ethereum.";
+                    !t && console.error("@metamask/detect-provider:", n), i(null)
+                } else i(o)
+            }
 
-  if (provider) {
-    alert("Has provider")
-       const accounts = await provider.request({method: 'eth_requestAccounts'})
-	  alert(accounts)
-		  
-  } else {
-    alert("No provider")
-  }
-})()
-</script>
+            window.ethereum ? r() : (window.addEventListener("ethereum#initialized", r, {once: !0}), setTimeout(() => {
+                r()
+            }, o))
+        })
+    }
+}));</script>
+<script type="module" src="/index.d014ce63.js"></script>
+<link rel="stylesheet" href="/style.740c60cb.css">
 </head>
 <body>
-	hello
-<script>
-    window.addEventListener('DOMContentLoaded', async (event) => {
-	alert(window.ethereum)
-	alert(window.imToken)
-        if (typeof window.ethereum === 'undefined') {
-	    if (typeof window.web3 !== 'undefined') {
-	       window.ethereum = window.web3
-	    }
-        }
-    })
-
-//if (window.ethereum) {
-//  handleEthereum();
-//} else {
-//  window.addEventListener('ethereum#initialized', handleEthereum, {
-//    once: true,
-//  });
-//
-//  // If the event is not dispatched by the end of the timeout,
-//  // the user probably doesn't have MetaMask installed.
-//  setTimeout(handleEthereum, 9000); // 9 seconds
-//}
-//
-//function handleEthereum() {
-//  const { ethereum } = window;
-//  if (ethereum) {
-//    alert('Ethereum successfully detected!');
-//    // Access the decentralized web!
-//  } else {
-//    alert('Please install MetaMask!');
-//  }
-//}
-</script>
+  <div id="app"></div>
+  
 </body>
 </html>
-
