@@ -1,1 +1,384 @@
-smart-hongbao
+<html>
+<head>
+<link rel="icon" href="assets/favicon.svg" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="assets/ethers-5.5.2.umd.min.js" type="application/javascript"></script>
+<script src="assets/detect-provider.min.js"></script>
+<script src="assets/attention.js"></script>
+<script src="assets/randarray.js"></script>
+<script src="assets/codec-b64.js"></script>
+<link rel="stylesheet" href="assets/bulma.min.css">
+<link rel="stylesheet" href="assets/attention.css">
+<title>🧧HongBao🧧</title>
+</head>
+<body style="margin: 0 auto; width: 380px">
+	<p>Your Address:<br><u id="signerAddress"></u></p>
+
+	<p>Which coin is used in hongbao?<br>
+	<input id="coinType" class="input is-danger is-small" type="text"
+	placeholder="Please enter an SEP20 token's address or symbol"></p>
+
+	<p>Total amount you'll give away:<br>
+	<input id="totalAmount" type="number" class="input is-danger is-small" ></p>
+
+	<p>The receivers:<br>
+	<textarea id="receivers" class="input is-danger is-small" style="height: 160px" placeholder="Here you can enter any text containing HEX addresses, which will be extracted out automatically"></textarea></p>
+
+	<p>What do you want say to the receivers?<br>
+	<textarea id="words" class="input is-danger is-small" style="height: 100px">Best Wishes!</textarea></p>
+
+	<label for="distr">How to distribute the coins?</label>
+	<select name="distr" id="distr" class="input is-danger is-small">
+	  <option value="random">Everyone gets a random amount</option>
+	  <option value="same">Everyone gets the same amount</option>
+	</select>
+
+	<p>Can only be accepted before (expire date):<br>
+	<input id="expireDate" type="datetime-local" class="input is-danger is-small" ></p>
+
+	<center><br><button class="button is-danger" onclick="generateURLs()" 
+	>Generate Hongbao🧧 URLs</button></center>
+
+	<!--
+	<center><br><button class="button is-primary" onclick="deploy()" 
+	>Deploy</button></center>
+	-->
+
+	<p>&nbsp;</p>
+
+	<p id="resultP" style="display: none">Generated Hongbao🧧 URLs:<br>
+	<pre id="result"></pre></p>
+<script>
+const MaxAmount = "0x0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+const SEP206Address = "0x0000000000000000000000000000000000002711"
+const SEP20ABI = [
+    "function symbol() view returns (string)",
+    "function decimals() view returns (uint8)",
+    "function balanceOf(address account) external view returns (uint256)",
+    "function allowance(address owner, address spender) external view returns (uint256)",
+    "function approve(address spender, uint256 amount) external returns (bool)",
+]
+
+const ExHubAddress = "0x909Dd32Eec39D3E903DBef4Bc51cc1172b91338e"
+
+const ExHubABI = [
+"function makerToAgent(address makerAddr) external view returns (address)",
+"function setMakerAgent(address agent) external",
+]
+
+const Domain = {
+      name: "exchange dapp",
+      version: "v0.1.0",
+      chainId: 10000,
+      verifyingContract: ExHubAddress,
+      salt: ethers.utils.id("Exchange"),
+}
+
+const Types = {
+	Exchange: [
+		{ name: "coinsToMaker", type: "uint256" },
+		{ name: "coinsToTaker", type: "uint256" },
+		{ name: "campaignID", type: "uint256" },
+		{ name: "takerAddr_dueTime80", type: "uint256" },
+	]
+}
+		
+async function connect() {
+	if (typeof window.ethereum === 'undefined') {
+		if (typeof window.web3 !== 'undefined') {
+			window.ethereum = window.web3;
+		} else if (typeof window.TPJSBrigeClient !== 'undefined') {
+			window.ethereum = window.TPJSBrigeClient;
+		} else if (typeof window.imToken !== 'undefined') {
+			window.ethereum = window.imToken;
+		} else {
+			const provider = await detectEthereumProvider();
+			if (provider) {
+				window.ethereum = provider;
+			} else if(IsPC()) {
+				alert("Your browser has not installed a wallet extension (like MetaMask).");
+			} else {
+				alert("Please open this page inside a mobile wallet App.");
+			}
+		}
+	}
+	window.accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+	if (window.accounts.length == 0) {
+        	window.AlertDlg = new Attention.Alert({title: "Warning",
+        	  content: "Cannot connect to wallet"});
+		return false;
+	}
+	return true;
+}
+
+async function getSEP20AddrAndSymbolAndDecimals(line) {
+      var trimmed = line.trim()
+      if(trimmed.length == 0) {
+        window.AlertDlg = new Attention.Alert({title: "No Coin Specified",
+          content: "You did not specify a coin address."});
+	return [null, null, null]
+      }
+      if(trimmed==SEP206Address || trimmed == "BCH" || trimmed == "bch") {
+        return [SEP206Address, "BCH", 18]
+      }
+      if(!trimmed.startsWith("0x") || trimmed.length < 10) {//not hex address, so it is a symbol
+         const hexAddr = localStorage.getItem("coin-"+trimmed)
+	 if(trimmed === null) {
+           window.AlertDlg = new Attention.Alert({title: "Unknow Coin",
+           content: `Cannot find ${trimmed}'s address in history, Please specify its address directly.`});
+	   return [null, null, null]
+	 }
+	 trimmed = hexAddr
+      }
+      try {
+        var sep20Addr = ethers.utils.getAddress(trimmed)
+      } catch(e) {
+        window.AlertDlg = new Attention.Alert({title: "Invalid Address",
+          content: `Format error: ${trimmed} is not a valid address`});
+	return [null, null, null]
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const sep20Contract = new ethers.Contract(sep20Addr, SEP20ABI, provider)
+      try {
+        var symbol = await sep20Contract.symbol()
+        var decimals = await sep20Contract.decimals()
+      } catch(e) {
+        window.AlertDlg = new Attention.Alert({title: "Non-SEP20 Address",
+          content: `${trimmed} is a valid address but not an SEP20 address`});
+	return [null, null, null]
+      }
+      localStorage.setItem("coin-"+symbol, sep20Addr)
+      return [sep20Addr, symbol, decimals]
+}
+
+function extractAddrList(text, sep20Addr) {
+	var entries = text.split("0x")
+	var addrSet = {}
+	var invalidAddrSet = {}
+	for(let entry of entries) {
+		if(entry.length < 40) {
+			continue
+		}
+		try {
+			const addr = ethers.utils.getAddress("0x"+entry.substr(0,40))
+			addrSet[addr] = true
+		} catch(e) {
+			invalidAddrSet[addr] = true
+		}
+	}
+	delete addrSet[sep20Addr]
+	var addrList = Object.keys(addrSet)
+	addrList.sort()
+	var invalidAddrList = Object.keys(invalidAddrSet)
+	invalidAddrList.sort()
+	return [addrList, invalidAddrList]
+}
+
+async function init() {
+	if(!connect()) {return;}
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	const signer = provider.getSigner();
+	const myAddr = await signer.getAddress();
+	document.getElementById("signerAddress").innerText = myAddr;
+
+	var d = new Date();
+	const offset = d.getTimezoneOffset()*60*1000
+	d.setTime(Date.now() + 24*3600*1000 - offset) // one day later
+	document.getElementById("expireDate").value = d.toISOString().replace(/\.[0-9][0-9][0-9]Z$/,"")
+}
+
+async function generateURLs() {
+	if(!connect()) {return;}
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	const signer = provider.getSigner();
+	const myAddr = await signer.getAddress();
+
+	const coinType = document.getElementById("coinType").value
+	var [sep20Addr, symbol, decimals] = await getSEP20AddrAndSymbolAndDecimals(coinType)
+	if(!sep20Addr) {return;}
+
+	const sep20Contract = new ethers.Contract(sep20Addr, SEP20ABI, provider).connect(signer)
+	try {
+		const balanceAmt = await sep20Contract.balanceOf(myAddr)
+		const allowanceAmt = await sep20Contract.allowance(myAddr, ExHubAddress)
+		var balance = ethers.utils.formatUnits(balanceAmt, decimals)
+		var allowance = ethers.utils.formatUnits(allowanceAmt, decimals)
+	} catch(e) {
+        	console.log(sep20Addr, e)
+        	window.AlertDlg = new Attention.Alert({title: "Non-SEP20 Address",
+        	  content: `${sep20Addr} is a valid address but not an SEP20 address`});
+		return
+	}
+	
+	const expireDate = new Date(document.getElementById("expireDate").value).getTime()
+	if(expireDate < Date.now()) {
+        	window.AlertDlg = new Attention.Alert({title: "Invalid Expire Date",
+        	  content: "Expire date must be later than now"});
+		return
+	}
+	if(expireDate > Date.now() + 3*24*3600*1000) {
+        	window.AlertDlg = new Attention.Alert({title: "Invalid Expire Date",
+        		content: "Expire date must be within 3 days."});
+		return
+	}
+	const expireTimestamp =  Math.floor(expireDate / 1000)
+	
+	var totalAmount = document.getElementById("totalAmount").value
+	if(totalAmount.length == 0) {
+		window.AlertDlg = new Attention.Alert({title: "No Amount Specified",
+		  content: "You did not specify the total amount."});
+		return
+	}
+	totalAmount = totalAmount*1.0
+	if(totalAmount == 0) {
+		window.AlertDlg = new Attention.Alert({title: "Zero Amount Specified",
+		  content: "The total amount can't be zero."});
+		return
+	}
+	if(balance < totalAmount) {
+        	window.AlertDlg = new Attention.Alert({title: "Balance Not Enough",
+			content: `Your ${symbol} balance is ${balance}, less than ${totalAmount}`});
+		return
+	}
+	if(sep20Addr != SEP206Address && allowance < totalAmount) {
+		new Attention.Confirm({title: `Approve ${symbol}`,
+			content: `You did not approve enough ${symbol} to hongbao.click, do you want to approve now? After sending the approving transaction, you can retry generating hongbao.`,
+			onConfirm(component) {
+				sep20Contract.approve(ExHubAddress, MaxAmount)
+			},
+			onCancel(component) {}});
+		return
+	}
+
+	const receivers = document.getElementById("receivers").value
+	const [addrList, invalidAddrList] = extractAddrList(receivers, sep20Addr)
+	if(invalidAddrList.length != 0) {
+        	window.AlertDlg = new Attention.Alert({title: "Invalid Receivers' addresses",
+			content: `Found these receivers' addresses are invalid: ${invalidAddrList}`});
+		return
+	}
+	if(addrList.length == 0) {
+        	window.AlertDlg = new Attention.Alert({title: "No Receiver",
+			content: "You didn't enter any receiver."});
+		return
+	} else if(addrList.length > 500) {
+        	window.AlertDlg = new Attention.Alert({title: "Too Many Receivers",
+			content: "You can't send hongbao to more than 500 receivers at a time."});
+		return
+	}
+	
+	const distr = document.getElementById("distr").value
+	const fixedDigits = (decimals>5) ? 5 : decimals;
+	var amountList = []
+	if(distr == "same") {
+		for(var i=0; i<addrList.length; i++) {
+			var amt = totalAmount/addrList.length;
+			amountList.push(amt.toFixed(fixedDigits))
+		}
+	} else {
+		amountList = randArray(addrList.length, totalAmount, fixedDigits)
+	}
+
+	const words = document.getElementById("words").value
+	const signature = await signer.signMessage(`[Grant-Hongbao-Wallet]\n${myAddr}\nI hereby grant this website the permission to access my Hongbao-Wallet.`);
+	var privKey = ethers.BigNumber.from(ethers.utils.sha256(signature));
+	const prime = ethers.BigNumber.from("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140");
+	const hongbaoWallet = new ethers.Wallet(privKey.mod(prime).toHexString());
+	const walletAddr = await hongbaoWallet.getAddress();
+	const exhubContract = new ethers.Contract(ExHubAddress, ExHubABI, provider).connect(signer);
+	const agentAddr = await exhubContract.makerToAgent(myAddr);
+	if(agentAddr != walletAddr) {
+		new Attention.Confirm({title: "Register Hongbao Wallet",
+			content: 'You must register your Hongbao-Wallet to the smart contract of hongbao.click. Otherwise the receivers cannot get hongbao from your account. Please click "agree" to register, and retry after sending the  register transaction.',
+			onConfirm(component) {
+				exhubContract.setMakerAgent(walletAddr)
+			},
+			onCancel(component) {}});
+		return
+	}
+
+	const expireNanosecondsBN = ethers.BigNumber.from(expireTimestamp).mul(1000*1000*1000)
+	var expirePicosecondsBN = expireNanosecondsBN.add(Math.floor(Math.random()*1000*1000*1000)).mul(1000)
+	for(var i=0; i<addrList.length; i++) {
+		const amtBN = ethers.utils.parseUnits(amountList[i], decimals)
+		signHongbao(hongbaoWallet, sep20Addr, addrList[i], amtBN, expirePicosecondsBN, myAddr, words)
+		expirePicosecondsBN = expirePicosecondsBN.add(1)
+	}
+
+	document.getElementById("resultP").style.display = "block"
+        window.AlertDlg = new Attention.Alert({title: "URLs Generated",
+		content: "The hongbao URLs are generated at the page bottom. Please check them out."});
+	setTimeout(function() {
+		window.AlertDlg.destroy()
+	}, 6000);
+}
+
+function hexToArr(hexString) {
+	return new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+}
+
+async function signHongbao(hongbaoWallet, sep20Addr, receiver, amtBN, expirePicosecondsBN, myAddr, words) {
+	const twoPow80 = ethers.BigNumber.from(2).pow(80);
+	const twoPow96 = ethers.BigNumber.from(2).pow(96);
+	var coinsToTakerBN = ethers.BigNumber.from(sep20Addr);
+	coinsToTakerBN = coinsToTakerBN.mul(twoPow96).add(amtBN);
+	const campaignID = ethers.utils.hexZeroPad(myAddr, 32);
+	var takerAddr_dueTime80_BN = ethers.BigNumber.from(receiver);
+	takerAddr_dueTime80_BN = takerAddr_dueTime80_BN.mul(twoPow80).add(expirePicosecondsBN);
+	const msg = {
+		coinsToMaker: ethers.BigNumber.from(0),
+		coinsToTaker: coinsToTakerBN,
+		campaignID: campaignID,
+		takerAddr_dueTime80: takerAddr_dueTime80_BN,
+	};
+	const sig = await hongbaoWallet._signTypedData(Domain, Types, msg);
+
+	const coinsToTaker = ethers.utils.hexZeroPad(coinsToTakerBN.toHexString(), 32);
+	const takerAddr_dueTime80 = takerAddr_dueTime80_BN.toHexString()
+	const dueTime80 = takerAddr_dueTime80.substr(takerAddr_dueTime80.length-20, 20);
+	// u=takerAddr c=ver8,coinType160,amount96,dueTime80,makerAddr160,r256,s256,v8,otherWords
+	const head="00"+coinsToTaker.substr(2)+dueTime80+myAddr.substr(2)+sig.substr(2);
+	//console.log("coinsToTaker", coinsToTaker)
+	//console.log("dueTime80", dueTime80)
+	//console.log("myAddr", myAddr)
+	//console.log("sig", sig)
+	const headArr=hexToArr(head);
+	const tailArr=strToUTF8Arr(words);
+	const mergedArr=mergeArrays([headArr, tailArr]);
+	//console.log("mergedArr", mergedArr);
+	const c = base64EncArr(mergedArr);
+	//console.log(c)
+	const url=`https://hongbao.click/get?u=${receiver}&c=${c}`
+	var elem = document.getElementById("result")
+	elem.innerText += url+"\n\n"
+
+}
+
+window.onload = init;
+
+document.onclick = function() {
+	if(window.AlertDlg) window.AlertDlg.destroy();
+}
+
+async function deploy() {
+  const abi = [ "constructor() public" ];
+  const bytecode = ""
+  
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  try {
+    const signer = provider.getSigner()
+    const factory = new ethers.ContractFactory(abi, bytecode, signer)
+    const contract = await factory.deploy();
+    console.log("address:", contract.address)
+    const receipt = await contract.deployTransaction.wait();
+    console.log(receipt)
+  } catch(e) {
+    alert("Error! "+e.toString())
+  }
+}
+
+
+</script>
+</body>
+</html>
