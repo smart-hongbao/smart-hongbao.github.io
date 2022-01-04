@@ -41,11 +41,13 @@ const SEP20ABI = [
     "function approve(address spender, uint256 amount) external returns (bool)",
 ]
 
-const ExHubAddress = "0x909Dd32Eec39D3E903DBef4Bc51cc1172b91338e"
+const ExHubAddress = "0x88D12E0369923dBf3b7c830c52ca67C1B0a56f0A"
 
 const ExHubABI = [
 "function exchangeWithAgentSig(uint256 coinsToMaker, uint256 coinsToTaker, uint256 takerAddr_dueTime80_v8, address makerAddr, bytes32 r, bytes32 s) payable external",
 "function isReplay(address makerAddr, uint dueTime) external view returns (bool)",
+"function makerNextRecentDueTime(address maker, uint dueTime) external view returns (uint)",
+"function makerRDTHeadTail(address maker) external view returns (uint)",
 ]
 
 
@@ -86,13 +88,37 @@ function timestamp2string(timestamp) {
 
 async function init() {
 	if(!connect()) {return;}
-	const provider = new ethers.providers.Web3Provider(window.ethereum);
-	const signer = provider.getSigner();
-	const myAddr = await signer.getAddress();
 
 	const url = new URL(location.href);
 	const user = url.searchParams.get("u");
 	const content = url.searchParams.get("c");
+	if(user && content) {
+		initUI(user, content)
+		return
+	}
+	const srcURL = url.searchParams.get("s");
+	if(!srcURL) {return;}
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	const signer = provider.getSigner();
+	const myAddr = await signer.getAddress();
+	document.getElementById("srcIframe").src = decodeURIComponent(srcURL)+"?msg=1"
+	window.addEventListener('message', function(event) {
+		if(event.data.event_id && event.data.event_id == "hongbao_cors_message") {
+			initUI(myAddr, event.data.hb_map[myAddr])
+		}
+	});
+}
+
+async function initUI(user, content) {
+	if(!content) {
+		window.ERR = {title: "Warning",
+		  content: `Cannot find any hongbao for your accout ${myAddr}`}
+        	window.AlertDlg = new Attention.Alert(window.ERR);
+		return
+	}
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	const signer = provider.getSigner();
+	const myAddr = await signer.getAddress();
 	if(user != myAddr) {
 		window.ERR = {title: "Warning",
 		  content: `This hongbao is for ${user}, not your accout ${myAddr}`}
@@ -136,6 +162,12 @@ async function init() {
 
 	const exhubContract = new ethers.Contract(ExHubAddress, ExHubABI, provider);
 	var alreadyAccepted = await exhubContract.isReplay(hongbao.maker, hongbao.dueTime);
+	//console.log("alreadyAccepted", alreadyAccepted);
+	//console.log("dueTime", hongbao.dueTime);
+	//const a = await exhubContract.makerNextRecentDueTime(hongbao.maker, hongbao.dueTime);
+	//console.log("a", a);
+	//const b = await exhubContract.makerRDTHeadTail(hongbao.maker);
+	//console.log("b", b);
 	if(alreadyAccepted) {
 		window.ERR = {title: "Already Accepted",
         	  content: "Sorry, but you have accepted this hongbao before"}
@@ -177,5 +209,6 @@ document.onclick = function() {
 }
 
 </script>
+<iframe id="srcIframe" src="" style="display: none" hidden></iframe>
 </body>
 </html>

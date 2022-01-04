@@ -46,12 +46,25 @@
 	-->
 
 	<p>&nbsp;</p>
-
-	<p id="resultP" style="display: none">Generated Hongbao🧧 URLs:<br>
-	<pre id="result"></pre></p>
 <script>
 const MaxAmount = "0x0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
 const SEP206Address = "0x0000000000000000000000000000000000002711"
+const Symbol2Addr = {
+	EBEN: "0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B",
+	FLEXUSD: "0x7b2B3C5308ab5b2a1d9a94d20D35CCDf61e05b72",
+	MIST: "0x5fA664f69c2A4A3ec94FaC3cBf7049BD9CA73129",
+	LAW: "0x0b00366fBF7037E9d75E4A569ab27dAB84759302",
+	CATS: "0x265bD28d79400D55a1665707Fa14A72978FA6043",
+	"$CATS": "0x265bD28d79400D55a1665707Fa14A72978FA6043",
+	CLY: "0x7642Df81b5BEAeEb331cc5A104bd13Ba68c34B91",
+	BPAD: "0x9192940099fDB2338B928DE2cad9Cd1525fEa881",
+	JOY: "0x6732E55Ac3ECa734F54C26Bd8DF4eED52Fb79a6E",
+	CLK: "0x659F04F36e90143fCaC202D4BC36C699C078fC98",
+	ORB: "0xff3ed63bf8bc9303ea0a7e1215ba2f82d569799e",
+	SPICE: "0xe11829a7d5d8806bb36e118461a1012588fafd89",
+	DAO: "0xca0235058985fcc1839e9e37c10900a73c126708",
+}
+
 const SEP20ABI = [
     "function symbol() view returns (string)",
     "function decimals() view returns (uint8)",
@@ -60,11 +73,12 @@ const SEP20ABI = [
     "function approve(address spender, uint256 amount) external returns (bool)",
 ]
 
-const ExHubAddress = "0x909Dd32Eec39D3E903DBef4Bc51cc1172b91338e"
+const ExHubAddress = "0x88D12E0369923dBf3b7c830c52ca67C1B0a56f0A"
 
 const ExHubABI = [
 "function makerToAgent(address makerAddr) external view returns (address)",
 "function setMakerAgent(address agent) external",
+"function putData(bytes data) external pure",
 ]
 
 const Domain = {
@@ -122,6 +136,9 @@ async function getSEP20AddrAndSymbolAndDecimals(line) {
       if(trimmed==SEP206Address || trimmed == "BCH" || trimmed == "bch") {
         return [SEP206Address, "BCH", 18]
       }
+      if(Symbol2Addr[trimmed]) {
+        trimmed = Symbol2Addr[trimmed]
+      }
       if(!trimmed.startsWith("0x") || trimmed.length < 10) {//not hex address, so it is a symbol
          const hexAddr = localStorage.getItem("coin-"+trimmed)
 	 if(trimmed === null) {
@@ -176,7 +193,7 @@ function extractAddrList(text, sep20Addr) {
 }
 
 async function init() {
-	if(!connect()) {return;}
+	if(!await connect()) {return;}
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const myAddr = await signer.getAddress();
@@ -189,7 +206,7 @@ async function init() {
 }
 
 async function generateURLs() {
-	if(!connect()) {return;}
+	if(!await connect()) {return;}
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const myAddr = await signer.getAddress();
@@ -262,10 +279,6 @@ async function generateURLs() {
         	window.AlertDlg = new Attention.Alert({title: "No Receiver",
 			content: "You didn't enter any receiver."});
 		return
-	} else if(addrList.length > 500) {
-        	window.AlertDlg = new Attention.Alert({title: "Too Many Receivers",
-			content: "You can't send hongbao to more than 500 receivers at a time."});
-		return
 	}
 	
 	const distr = document.getElementById("distr").value
@@ -300,22 +313,35 @@ async function generateURLs() {
 
 	const expireNanosecondsBN = ethers.BigNumber.from(expireTimestamp).mul(1000*1000*1000)
 	var expirePicosecondsBN = expireNanosecondsBN.add(Math.floor(Math.random()*1000*1000*1000)).mul(1000)
+	var urls = []
+	var mapLines = []
 	for(var i=0; i<addrList.length; i++) {
 		const amtBN = ethers.utils.parseUnits(amountList[i], decimals)
-		signHongbao(hongbaoWallet, sep20Addr, addrList[i], amtBN, expirePicosecondsBN, myAddr, words)
+		const c = await signHongbao(hongbaoWallet, sep20Addr, addrList[i], amtBN, expirePicosecondsBN, myAddr, words)
+		urls +=`https://hongbao.click/get?u=${addrList[i]}&c=${c}\n\n`
+		mapLines += `"${addrList[i]}": "${c}",\n`
 		expirePicosecondsBN = expirePicosecondsBN.add(1)
 	}
-
-	document.getElementById("resultP").style.display = "block"
-        window.AlertDlg = new Attention.Alert({title: "URLs Generated",
-		content: "The hongbao URLs are generated at the page bottom. Please check them out."});
-	setTimeout(function() {
-		window.AlertDlg.destroy()
-	}, 6000);
+	new Attention.Confirm({title: "Download URL List",
+		content: "Do you want to download a plain text file containing hongbao URLs?",
+		onConfirm(component) {
+			saveTxt("hongbao.txt", urls)
+		},
+		onCancel(component) {}});
+	new Attention.Confirm({title: "Download HTML File",
+		content: "Do you want to download a html which help the receivers to get hongbao?",
+		onConfirm(component) {
+			saveHtml("hongbao.html", mapLines)
+		},
+		onCancel(component) {}});
 }
 
 function hexToArr(hexString) {
 	return new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+}
+
+function arrToHex(buffer) {
+	return Array.prototype.map.call(buffer, x => x.toString(16).padStart(2, '0')).join('');
 }
 
 async function signHongbao(hongbaoWallet, sep20Addr, receiver, amtBN, expirePicosecondsBN, myAddr, words) {
@@ -349,11 +375,46 @@ async function signHongbao(hongbaoWallet, sep20Addr, receiver, amtBN, expirePico
 	//console.log("mergedArr", mergedArr);
 	const c = base64EncArr(mergedArr);
 	//console.log(c)
-	const url=`https://hongbao.click/get?u=${receiver}&c=${c}`
-	var elem = document.getElementById("result")
-	elem.innerText += url+"\n\n"
-
+	return c
 }
+
+function saveHtml(filename, mapLines) {
+	var data ='<html@@body@@script>'.replace(/@@/g, "><")
+	data += `const url = new URL(location.href);
+		const msg = url.searchParams.get("msg");
+		if(msg) {
+		window.parent.postMessage(
+		    {
+			event_id: "hongbao_cors_message",
+			hb_map: {`
+	data += mapLines
+	data += `	}
+		    },
+		    "*"
+		);
+		} else {
+		const url = "https://hongbao.click/get?s="+encodeURIComponent(window.location.href)
+		window.location.href = url`
+	data += "} </script@@/body@@/html>".replace(/@@/g, "><")
+	const blob = new Blob([data], {type: 'text/html'});
+	const elem = window.document.createElement('a');
+	elem.href = window.URL.createObjectURL(blob);
+	elem.download = filename;        
+	document.body.appendChild(elem);
+	elem.click();        
+	document.body.removeChild(elem);
+}
+
+function saveTxt(filename, urls) {
+	const blob = new Blob([urls], {type: 'text/plain'});
+	const elem = window.document.createElement('a');
+	elem.href = window.URL.createObjectURL(blob);
+	elem.download = filename;
+	document.body.appendChild(elem);
+	elem.click();        
+	document.body.removeChild(elem);
+}
+
 
 window.onload = init;
 
