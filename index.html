@@ -16,8 +16,9 @@
 	<p>Your Address:<br><u id="signerAddress"></u></p>
 
 	<p>Which coin is used in hongbao?<br>
-	<input id="coinType" class="input is-danger is-small" type="text"
-	placeholder="Please enter an SEP20 token's address or symbol"></p>
+	<input id="coinType" class="input is-danger is-small" type="text" list="symbols"
+	placeholder="Please enter an SEP20 token's address or symbol">
+	<datalist id="symbols"></datalist></p>
 
 	<p>Total amount you'll give away:<br>
 	<input id="totalAmount" type="number" class="input is-danger is-small" ></p>
@@ -166,6 +167,13 @@ async function getSEP20AddrAndSymbolAndDecimals(line) {
 	return [null, null, null]
       }
       localStorage.setItem("coin-"+symbol, sep20Addr)
+      var coinMap = {}
+      var storedCoins = localStorage.getItem("COINS")
+      if(storedCoins) {
+        coinMap = JSON.parse(storedCoins)
+      }
+      coinMap[symbol] = true
+      localStorage.setItem("COINS", JSON.stringify(coinMap))
       return [sep20Addr, symbol, decimals]
 }
 
@@ -203,6 +211,22 @@ async function init() {
 	const offset = d.getTimezoneOffset()*60*1000
 	d.setTime(Date.now() + 24*3600*1000 - offset) // one day later
 	document.getElementById("expireDate").value = d.toISOString().replace(/\.[0-9][0-9][0-9]Z$/,"")
+
+	var optList = ['<option value="BCH">']
+	var symbols = Object.keys(Symbol2Addr)
+	for(var i=0; i<symbols.length; i++) {
+		optList.push(`<option value="${symbols[i]}">`)
+	}
+	var storedCoins = localStorage.getItem("COINS")
+	if(storedCoins) {
+		symbols = Object.keys(JSON.parse(storedCoins))
+		for(var i=0; i<symbols.length; i++) {
+			if(!Symbol2Addr[symbols[i]]) {
+				optList.unshift(`<option value="${symbols[i]}">`)
+			}
+		}
+	}
+	document.getElementById("symbols").innerHTML = optList.join("")
 }
 
 async function generateURLs() {
