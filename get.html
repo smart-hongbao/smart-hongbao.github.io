@@ -110,15 +110,15 @@ async function init() {
 }
 
 async function initUI(user, content) {
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	const signer = provider.getSigner();
+	const myAddr = await signer.getAddress();
 	if(!content) {
 		window.ERR = {title: "Warning",
 		  content: `Cannot find any hongbao for your accout ${myAddr}`}
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		return
 	}
-	const provider = new ethers.providers.Web3Provider(window.ethereum);
-	const signer = provider.getSigner();
-	const myAddr = await signer.getAddress();
 	if(user != myAddr) {
 		window.ERR = {title: "Warning",
 		  content: `This hongbao is for ${user}, not your accout ${myAddr}`}
