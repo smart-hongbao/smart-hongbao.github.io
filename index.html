@@ -39,7 +39,7 @@
 	<input id="expireDate" type="datetime-local" class="input is-danger is-small" ></p>
 
 	<center><br><button class="button is-danger" onclick="generateURLs()" 
-	>Generate Hongbao🧧 URLs</button></center>
+	>Create Hongbao🧧</button></center>
 
 	<!--
 	<center><br><button class="button is-primary" onclick="deploy()" 
@@ -55,7 +55,6 @@ const Symbol2Addr = {
 	FLEXUSD: "0x7b2B3C5308ab5b2a1d9a94d20D35CCDf61e05b72",
 	MIST: "0x5fA664f69c2A4A3ec94FaC3cBf7049BD9CA73129",
 	LAW: "0x0b00366fBF7037E9d75E4A569ab27dAB84759302",
-	CATS: "0x265bD28d79400D55a1665707Fa14A72978FA6043",
 	"$CATS": "0x265bD28d79400D55a1665707Fa14A72978FA6043",
 	CLY: "0x7642Df81b5BEAeEb331cc5A104bd13Ba68c34B91",
 	BPAD: "0x9192940099fDB2338B928DE2cad9Cd1525fEa881",
@@ -234,6 +233,12 @@ async function generateURLs() {
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const myAddr = await signer.getAddress();
+	const network = await provider.getNetwork();
+	if(network.chainId != 10000) {
+        	window.AlertDlg = new Attention.Alert({title: "Incorrect Network",
+        	  content: "You are not connecting to the smartBCH chain."});
+		return
+	}
 
 	const coinType = document.getElementById("coinType").value
 	var [sep20Addr, symbol, decimals] = await getSEP20AddrAndSymbolAndDecimals(coinType)
