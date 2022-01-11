@@ -148,6 +148,15 @@ async function initUI(user, content) {
 	const symbol = await sep20Contract.symbol()
 	const decimals = await sep20Contract.decimals()
 	const amt = ethers.utils.formatUnits(hongbao.amount, decimals)
+
+	const balanceAmt = await sep20Contract.balanceOf(hongbao.maker)
+	if(balanceAmt.lt(hongbao.amount)) {
+		window.ERR = {title: "Sender's balance is not enough",
+        	  content: "Sender's balance has been used up by other receivers and can't pay your hongbao now."};
+        	window.AlertDlg = new Attention.Alert(window.ERR);
+		document.getElementById("sad").style.display = "block"
+		return false;
+	}
 	
 	const dueTime = hongbao.dueTime.div(1000*1000*1000).toNumber() //picoseconds to microseconds
 	if(dueTime < Date.now()) {
@@ -180,6 +189,21 @@ async function initUI(user, content) {
 	document.getElementById("coins").innerText = amt+" "+symbol
 }
 
+async function recheckBalance() {
+	const provider = new ethers.providers.Web3Provider(window.ethereum);
+	const signer = provider.getSigner();
+	const sep20Contract = new ethers.Contract(HB.coinType, SEP20ABI, provider)
+	const balanceAmt = await sep20Contract.balanceOf(HB.maker)
+	if(balanceAmt.lt(HB.amount)) {
+		window.ERR = {title: "Sender's balance is not enough",
+        	  content: "Sender's balance has been used up by other receivers and can't pay your hongbao now."};
+        	window.AlertDlg = new Attention.Alert(window.ERR);
+		document.getElementById("open").style.display = "none"
+		document.getElementById("sad").style.display = "block"
+		return false;
+	}
+}
+
 async function getHongbao() {
 	if(window.ERR) {
         	window.AlertDlg = new Attention.Alert(window.ERR);
@@ -188,6 +212,7 @@ async function getHongbao() {
 	if(!window.HB) {
 		return false;
 	}
+	recheckBalance()
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const myAddr = await signer.getAddress();

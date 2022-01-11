@@ -180,12 +180,13 @@ function extractAddrList(text, sep20Addr) {
 	var entries = text.split("0x")
 	var addrSet = {}
 	var invalidAddrSet = {}
-	for(let entry of entries) {
+	for(let entry of entries.slice(1)) {
 		if(entry.length < 40) {
 			continue
 		}
+		var addr = "0x"+entry.substr(0,40)
 		try {
-			const addr = ethers.utils.getAddress("0x"+entry.substr(0,40))
+			addr = ethers.utils.getAddress(addr)
 			addrSet[addr] = true
 		} catch(e) {
 			invalidAddrSet[addr] = true
