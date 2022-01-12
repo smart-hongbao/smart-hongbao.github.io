@@ -197,8 +197,8 @@ async function initUI(user, content) {
 
 	const sep20Contract = new ethers.Contract(hongbao.coinType, SEP20ABI, provider)
 	try {
-		const symbol = await sep20Contract.symbol()
-		const decimals = await sep20Contract.decimals()
+		var symbol = await sep20Contract.symbol()
+		var decimals = await sep20Contract.decimals()
 	} catch(e) {
 		window.ERR = {title: T("Warning//警告"),
 		  content: T("Cannot access RPC server//无法访问RPC服务器")}
