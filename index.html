@@ -21,7 +21,9 @@
 	<datalist id="symbols"></datalist></p>
 
 	<p>Total amount you'll give away:<br>
-	<input id="totalAmount" type="number" class="input is-danger is-small" ></p>
+	<input id="totalAmount" type="number" class="input is-danger is-small" ><br>
+
+	<input type="checkbox" id="checkBalance" checked><label for="checkBalance">Check your balance is enough for these hongbaos.</label></p>
 
 	<p>The receivers:<br>
 	<textarea id="receivers" class="input is-danger is-small" style="height: 160px" placeholder="Here you can enter any text containing HEX addresses, which will be extracted out automatically"></textarea></p>
@@ -98,6 +100,19 @@ const Types = {
 	]
 }
 		
+function IsPC() {
+       var userAgentInfo = navigator.userAgent;
+       var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");
+       var flag = true;
+       for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+             }
+       }
+       return flag;
+}
+
 async function connect() {
 	if (typeof window.ethereum === 'undefined') {
 		if (typeof window.web3 !== 'undefined') {
@@ -283,7 +298,8 @@ async function generateURLs() {
 		  content: "The total amount can't be zero."});
 		return
 	}
-	if(balance < totalAmount) {
+	var checkBalance = document.getElementById("checkBalance").checked
+	if(checkBalance && balance < totalAmount) {
         	window.AlertDlg = new Attention.Alert({title: "Balance Not Enough",
 			content: `Your ${symbol} balance is ${balance}, less than ${totalAmount}`});
 		return
@@ -352,16 +368,17 @@ async function generateURLs() {
 		mapLines += `"${addrList[i]}": "${c}",\n`
 		expirePicosecondsBN = expirePicosecondsBN.add(1)
 	}
+	var t = new Date().toISOString().substr(0,16).replace(":","")
 	new Attention.Confirm({title: "Download URL List",
 		content: "Do you want to download a plain text file containing hongbao URLs?",
 		onConfirm(component) {
-			saveTxt("hongbao.txt", urls)
+			saveTxt("hongbao"+t+".txt", urls)
 		},
 		onCancel(component) {}});
 	new Attention.Confirm({title: "Download HTML File",
 		content: "Do you want to download a html which help the receivers to get hongbao?",
 		onConfirm(component) {
-			saveHtml("hongbao.html", mapLines)
+			saveHtml("hongbao"+t+".html", mapLines)
 		},
 		onCancel(component) {}});
 }
