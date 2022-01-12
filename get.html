@@ -145,9 +145,15 @@ async function init() {
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const myAddr = await signer.getAddress();
-	document.getElementById("srcIframe").src = decodeURIComponent(srcURL)+"?msg=1"
+	window.SrcURL = decodeURIComponent(srcURL)
+	var timer = setTimeout(() => {
+        	window.AlertDlg = new Attention.Alert({title: T("Connection Timeout//连接超时"),
+        	  content: T("Cannot connect to //无法连接到")+window.SrcURL});
+	}, 10*1000);
+	document.getElementById("srcIframe").src = window.SrcURL+"?msg=1"
 	window.addEventListener('message', function(event) {
 		if(event.data.event_id && event.data.event_id == "hongbao_cors_message") {
+			clearTimeout(timer)
 			initUI(myAddr, event.data.hb_map[myAddr])
 		}
 	});
@@ -219,7 +225,7 @@ async function initUI(user, content) {
 	const dueTime = hongbao.dueTime.div(1000*1000*1000).toNumber() //picoseconds to microseconds
 	if(dueTime < Date.now()) {
 		window.ERR = {title: T("Hongbao Expired//红包过期"),
-        	  content: T("Sorry, but this hongbao was expired at //抱歉，此红包已于此时刻过期："+timestamp2string(dueTime))};
+        	  content: T("Sorry, but this hongbao was expired at //抱歉，此红包已于此时刻过期：")+timestamp2string(dueTime)};
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("sad").style.display = "block"
 		return false;
