@@ -17,7 +17,8 @@
 	</div>
 	<p style="position:absolute; width:380px; top: 68px; left: 0px; text-align: center; font-size: 30px; color: gold" id="coins"></p>
 	<p style="position:absolute; width:380px; top: 352px; left: 0px; text-align: center; font-size: 30px; color: gold; white-space: pre;" id="words"></p>
-	<p style="position:absolute; width:380px; top: 212px; left: 0px; text-align: center; font-size: 30px; display: none" id="open"><a href="#" onclick="return getHongbao()" style="color: yellow;">OPEN!</a></p>
+	<p style="position:absolute; width:380px; top: 212px; left: 0px; text-align: center; font-size: 30px; display: none; color: white" id="opened"><span data-T>opened//已领取</span></p>
+	<p style="position:absolute; width:380px; top: 212px; left: 0px; text-align: center; font-size: 30px; display: none" id="open"><a href="#" onclick="return getHongbao()" style="color: yellow;" data-T>OPEN!//打开!</a></p>
 	<p style="position:absolute; width:380px; top: 174px; left: 0px; text-align: center; font-size: 30px; color: yellow; display: none;" id="sad"><img style="width: 120px; height: auto" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI0OHB4IiBpZD0ic3ZnNDM3NiIgd2lkdGg9IjQ4cHgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6Y2M9Imh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL25zIyIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIiB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIiB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZGVmcyBpZD0iZGVmczMiPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyR3JhZGllbnQzMjkwIj48c3RvcCBpZD0ic3RvcDMyOTIiIG9mZnNldD0iMC4wMDAwMDAwIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmY2RlO3N0b3Atb3BhY2l0eToxLjAwMDAwMDA7Ii8+PHN0b3AgaWQ9InN0b3AzMjk0IiBvZmZzZXQ9IjAuNjQ0ODU5NzkiIHN0eWxlPSJzdG9wLWNvbG9yOiNmNmU3NmE7c3RvcC1vcGFjaXR5OjEuMDAwMDAwMDsiLz48c3RvcCBpZD0ic3RvcDMyOTYiIG9mZnNldD0iMS4wMDAwMDAwIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZiNzM4O3N0b3Atb3BhY2l0eToxLjAwMDAwMDA7Ii8+PC9saW5lYXJHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgY3g9IjI5LjI4ODA3MSIgY3k9IjE1LjcyMDk4NCIgZng9IjI5LjE1ODQ2NiIgZnk9IjE1Ljc1NTcxMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJyYWRpYWxHcmFkaWVudDI3MTQiIHI9IjguOTAyMDc5NiIgeGxpbms6aHJlZj0iI2xpbmVhckdyYWRpZW50MzI5MCIvPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyR3JhZGllbnQyNTA5Ij48c3RvcCBpZD0ic3RvcDI1MTEiIG9mZnNldD0iMC4wMDAwMDAwIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmYmQ1O3N0b3Atb3BhY2l0eToxLjAwMDAwMDA7Ii8+PHN0b3AgaWQ9InN0b3AyNTEzIiBvZmZzZXQ9IjEuMDAwMDAwMCIgc3R5bGU9InN0b3AtY29sb3I6I2VkZDQwMDtzdG9wLW9wYWNpdHk6MS4wMDAwMDAwOyIvPjwvbGluZWFyR3JhZGllbnQ+PHJhZGlhbEdyYWRpZW50IGN4PSIyNS4wNTI3IiBjeT0iMzkuNTkyOCIgZng9IjI1LjA1MjciIGZ5PSIzOS41OTI4IiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDEuMjUwMDAwLDAuMDAwMDAwLDAuMDAwMDAwLC0xLjI1MDAwMCwtNi40Nzk0NDYsNzMuNjY0NDgpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImFpZ3JkMiIgcj0iMTUuNzU3MiI+PHN0b3AgaWQ9InN0b3A4NjAyIiBvZmZzZXQ9IjAuMDAwMDAwMCIgc3R5bGU9InN0b3AtY29sb3I6Izc3Nzc3NztzdG9wLW9wYWNpdHk6MS4wMDAwMDAwOyIvPjxzdG9wIGlkPSJzdG9wODYwNCIgb2Zmc2V0PSIxIiBzdHlsZT0ic3RvcC1jb2xvcjojMDAwMDAwIi8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhckdyYWRpZW50NDU2NSI+PHN0b3AgaWQ9InN0b3A0NTY3IiBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDAwMDA7c3RvcC1vcGFjaXR5OjE7Ii8+PHN0b3AgaWQ9InN0b3A0NTY5IiBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDAwMDA7c3RvcC1vcGFjaXR5OjA7Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhckdyYWRpZW50MzgyNCI+PHN0b3AgaWQ9InN0b3AzODI2IiBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmZmZmY7c3RvcC1vcGFjaXR5OjE7Ii8+PHN0b3AgaWQ9InN0b3AzODI4IiBvZmZzZXQ9IjEuMDAwMDAwMCIgc3R5bGU9InN0b3AtY29sb3I6I2M5YzljOTtzdG9wLW9wYWNpdHk6MS4wMDAwMDAwOyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXJHcmFkaWVudDM4MDAiPjxzdG9wIGlkPSJzdG9wMzgwMiIgb2Zmc2V0PSIwLjAwMDAwMDAiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmVlZDY7c3RvcC1vcGFjaXR5OjEuMDAwMDAwMDsiLz48c3RvcCBpZD0ic3RvcDg2NjQiIG9mZnNldD0iMC41MDAwMDAwMCIgc3R5bGU9InN0b3AtY29sb3I6I2U0OWMyZjtzdG9wLW9wYWNpdHk6MS4wMDAwMDAwOyIvPjxzdG9wIGlkPSJzdG9wMzgwNCIgb2Zmc2V0PSIxLjAwMDAwMDAiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmM2NmM7c3RvcC1vcGFjaXR5OjEuMDAwMDAwMDsiLz48L2xpbmVhckdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBjeD0iMjQuNzE0Mjg1IiBjeT0iMzguNTcxNDMwIiBmeD0iMjQuNzE0Mjg1IiBmeT0iMzguNTcxNDMwIiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDEuMDAwMDAwLDAuMDAwMDAwLDAuMDAwMDAwLDAuMzMzMzMzLDAuMDAwMDAwLDI1LjcxNDI5KSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJyYWRpYWxHcmFkaWVudDQ1NzEiIHI9IjE5LjcxNDI4NSIgeGxpbms6aHJlZj0iI2xpbmVhckdyYWRpZW50NDU2NSIvPjwvZGVmcz48ZyBpZD0ibGF5ZXIxIj48cGF0aCBkPSJNIDQ0LjQyODU3MCAzOC41NzE0MzAgQSAxOS43MTQyODUgNi41NzE0Mjg4IDAgMSAxICA1LjAwMDAwMDAsMzguNTcxNDMwIEEgMTkuNzE0Mjg1IDYuNTcxNDI4OCAwIDEgMSAgNDQuNDI4NTcwIDM4LjU3MTQzMCB6IiBpZD0icGF0aDQ1NjMiIHN0eWxlPSJvcGFjaXR5OjAuNTMxNjQ1NTc7Y29sb3I6IzAwMDAwMDtmaWxsOnVybCgjcmFkaWFsR3JhZGllbnQ0NTcxKTtmaWxsLW9wYWNpdHk6MS4wO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjQwNDg3MTczO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDttYXJrZXI6bm9uZTttYXJrZXItc3RhcnQ6bm9uZTttYXJrZXItbWlkOm5vbmU7bWFya2VyLWVuZDpub25lO3N0cm9rZS1taXRlcmxpbWl0OjQuMDAwMDAwMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLWRhc2hvZmZzZXQ6MC4wMDAwMDAwO3N0cm9rZS1vcGFjaXR5OjEuMDAwMDAwMDt2aXNpYmlsaXR5OnZpc2libGU7ZGlzcGxheTppbmxpbmU7b3ZlcmZsb3c6dmlzaWJsZSIvPjxwYXRoIGQ9Ik0gMzkuNzc0NzU1IDE5LjAwODYyMSBBIDguNjYyMDU3OSA4LjY2MjA1NzkgMCAxIDEgIDIyLjQ1MDY0MCwxOS4wMDg2MjEgQSA4LjY2MjA1NzkgOC42NjIwNTc5IDAgMSAxICAzOS43NzQ3NTUgMTkuMDA4NjIxIHoiIGlkPSJwYXRoNDMyMCIgc3R5bGU9Im9wYWNpdHk6MS4wMDAwMDAwO2NvbG9yOiMwMDAwMDA7ZmlsbDp1cmwoI3JhZGlhbEdyYWRpZW50MjcxNCk7ZmlsbC1vcGFjaXR5OjEuMDAwMDAwMDtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6IzljOGMwYTtzdHJva2Utd2lkdGg6MC40ODAwNDQwNDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7bWFya2VyOm5vbmU7bWFya2VyLXN0YXJ0Om5vbmU7bWFya2VyLW1pZDpub25lO21hcmtlci1lbmQ6bm9uZTtzdHJva2UtbWl0ZXJsaW1pdDo0LjAwMDAwMDA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1kYXNob2Zmc2V0OjAuMDAwMDAwMDtzdHJva2Utb3BhY2l0eToxLjAwMDAwMDA7dmlzaWJpbGl0eTp2aXNpYmxlO2Rpc3BsYXk6aW5saW5lO292ZXJmbG93OnZpc2libGUiIHRyYW5zZm9ybT0ibWF0cml4KDIuMDgzMTQyLDAuMDAwMDAwLDAuMDAwMDAwLDIuMDgzMTQyLC00MC41NDcxNSwtMTYuNDkyMjQpIi8+PHBhdGggZD0iTSAzOS43NzQ3NTUgMTkuMDA4NjIxIEEgOC42NjIwNTc5IDguNjYyMDU3OSAwIDEgMSAgMjIuNDUwNjQwLDE5LjAwODYyMSBBIDguNjYyMDU3OSA4LjY2MjA1NzkgMCAxIDEgIDM5Ljc3NDc1NSAxOS4wMDg2MjEgeiIgaWQ9InBhdGg0MzIyIiBzdHlsZT0ib3BhY2l0eTowLjY3NzIxNTE5O2NvbG9yOiMwMDAwMDA7ZmlsbDpub25lO2ZpbGwtb3BhY2l0eToxLjAwMDAwMDA7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOiNmZmZmZmY7c3Ryb2tlLXdpZHRoOjAuNTA1MTA2Mjc7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO21hcmtlcjpub25lO21hcmtlci1zdGFydDpub25lO21hcmtlci1taWQ6bm9uZTttYXJrZXItZW5kOm5vbmU7c3Ryb2tlLW1pdGVybGltaXQ6NC4wMDAwMDAwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2UtZGFzaG9mZnNldDowLjAwMDAwMDA7c3Ryb2tlLW9wYWNpdHk6MS4wMDAwMDAwO3Zpc2liaWxpdHk6dmlzaWJsZTtkaXNwbGF5OmlubGluZTtvdmVyZmxvdzp2aXNpYmxlIiB0cmFuc2Zvcm09Im1hdHJpeCgxLjk3OTc4MiwwLjAwMDAwMCwwLjAwMDAwMCwxLjk3OTc4MiwtMzcuMzMxMjgsLTE0LjUyNzQ2KSIvPjxwYXRoIGQ9Ik0gMzQuMDE0MjY4LDMyLjAzNjg0MiBDIDMwLjI5MDY5NCwyNy44NzI4MzAgMjguNDUxODU5LDI2LjQwNTU2MSAyNC40NjI0OTIsMjYuNDA1NTYxIEMgMjAuNTYxMzEzLDI2LjQwNTU2MSAxNy45NjI4MjAsMjguMDkzNjA3IDE1LjA4NzQ5MiwzMi4zOTAzOTYgQyAxOC41MjA3ODksMzAuMDQxNTgzIDIwLjM5NzEyNCwyOC43NDA5MDAgMjQuMTk3MzI3LDI4Ljc0MDkwMCBDIDI3LjkwOTE2NiwyOC43NDA5MDAgMjkuOTQ4NDA0LDI5Ljc5MTU5OSAzNC4wMTQyNjgsMzIuMDM2ODQyIHogIiBpZD0icGF0aDEzODciIHN0eWxlPSJvdmVyZmxvdzp2aXNpYmxlO2Rpc3BsYXk6aW5saW5lO3Zpc2liaWxpdHk6dmlzaWJsZTtzdHJva2Utb3BhY2l0eToxLjAwMDAwMDA7c3Ryb2tlLWRhc2hvZmZzZXQ6MC4wMDAwMDAwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTttYXJrZXItZW5kOm5vbmU7bWFya2VyLW1pZDpub25lO21hcmtlci1zdGFydDpub25lO21hcmtlcjpub25lO3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS13aWR0aDoxLjAwMDAwMDA7ZmlsbC1vcGFjaXR5OjEuMDAwMDAwMDtjb2xvcjojMDAwMDAwO29wYWNpdHk6MC4zNTk5OTk5ODtzdHJva2UtbWl0ZXJsaW1pdDo0LjAwMDAwMDA7c3Ryb2tlOm5vbmU7ZmlsbC1ydWxlOm5vbnplcm87ZmlsbDojZmZmZmZmIi8+PHBhdGggZD0iTSAzNC4wMTQyNjgsMzEuMzI5NzM4IEMgMzAuMjkwNjk0LDI3LjE2NTcyNiAyOC40NTE4NTksMjUuNjk4NDU3IDI0LjQ2MjQ5MiwyNS42OTg0NTcgQyAyMC41NjEzMTMsMjUuNjk4NDU3IDE3Ljk2MjgyMCwyNy4zODY1MDMgMTUuMDg3NDkyLDMxLjY4MzI5MiBDIDE4LjUyMDc4OSwyOS4zMzQ0NzkgMjAuMzk3MTI0LDI4LjAzMzc5NiAyNC4xOTczMjcsMjguMDMzNzk2IEMgMjcuOTA5MTY2LDI4LjAzMzc5NiAyOS45NDg0MDQsMjkuMDg0NDk1IDM0LjAxNDI2OCwzMS4zMjk3MzggeiAiIGlkPSJwYXRoODYwNiIgc3R5bGU9ImZpbGw6dXJsKCNhaWdyZDIpO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lO3N0cm9rZS1taXRlcmxpbWl0OjQuMDAwMDAwMCIvPjxnIGlkPSJnODY2NiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC4zNTM1NTMsMi4zOTI3MDYpIj48cGF0aCBkPSJNIDIxLjM5ODE1OCwxNS4zMjE0MjggQyAyMS4zOTgxNTgsMTcuODIxNDI4IDIwLjI3MzE1OCwxOS44MjE0MjggMTguODk4MTU4LDE5LjgyMTQyOCBDIDE3LjUyMzE1OCwxOS44MjE0MjggMTYuMjczMTU4LDE3LjgyMTQyOCAxNi4yNzMxNTgsMTUuMzIxNDI4IEMgMTYuMjczMTU4LDEyLjgyMTQyOCAxNy4zOTgxNTgsMTAuODIxNDI4IDE4Ljc3MzE1OCwxMC44MjE0MjggQyAyMC4xNDgxNTgsMTAuODIxNDI4IDIxLjI3MzE1OCwxMi44MjE0MjggMjEuMjczMTU4LDE1LjMyMTQyOCBMIDIxLjM5ODE1OCwxNS4zMjE0MjggeiAiIGlkPSJwYXRoODYxMCIgc3R5bGU9Im9wYWNpdHk6MC4zNTk5OTk5ODtmaWxsOiNmZmZmZmY7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmU7c3Ryb2tlLW1pdGVybGltaXQ6NC4wMDAwMDAwIi8+PHBhdGggZD0iTSAzMC42ODg1MTIsMTUuMzIxNDI4IEMgMzAuNjg4NTEyLDE3LjgyMTQyOCAyOS41NjM1MTIsMTkuODIxNDI4IDI4LjE4ODUxMiwxOS44MjE0MjggQyAyNi44MTM1MTIsMTkuODIxNDI4IDI1LjY4ODUxMiwxNy44MjE0MjggMjUuNjg4NTEyLDE1LjMyMTQyOCBDIDI1LjY4ODUxMiwxMi44MjE0MjggMjYuODEzNTEyLDEwLjgyMTQyOCAyOC4xODg1MTIsMTAuODIxNDI4IEMgMjkuNTYzNTEyLDEwLjgyMTQyOCAzMC42ODg1MTIsMTIuODIxNDI4IDMwLjY4ODUxMiwxNS4zMjE0MjggeiAiIGlkPSJwYXRoODYxMiIgc3R5bGU9Im9wYWNpdHk6MC4zNTk5OTk5ODtmaWxsOiNmZmZmZmY7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmU7c3Ryb2tlLW1pdGVybGltaXQ6NC4wMDAwMDAwIi8+PHBhdGggZD0iTSAyMS4zOTgxNTgsMTQuNjk2NDI4IEMgMjEuMzk4MTU4LDE3LjE5NjQyOCAyMC4yNzMxNTgsMTkuMTk2NDI4IDE4Ljg5ODE1OCwxOS4xOTY0MjggQyAxNy41MjMxNTgsMTkuMTk2NDI4IDE2LjM5ODE1OCwxNy4xOTY0MjggMTYuMzk4MTU4LDE0LjY5NjQyOCBDIDE2LjM5ODE1OCwxMi4xOTY0MjggMTcuNTIzMTU4LDEwLjE5NjQyOCAxOC44OTgxNTgsMTAuMTk2NDI4IEMgMjAuMjczMTU4LDEwLjE5NjQyOCAyMS4zOTgxNTgsMTIuMTk2NDI4IDIxLjM5ODE1OCwxNC42OTY0MjggeiAiIGlkPSJwYXRoODYxNCIgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZTtzdHJva2UtbWl0ZXJsaW1pdDo0LjAwMDAwMDAiLz48cGF0aCBkPSJNIDMwLjY4ODUxMiwxNC42OTY0MjggQyAzMC42ODg1MTIsMTcuMTk2NDI4IDI5LjU2MzUxMiwxOS4xOTY0MjggMjguMTg4NTEyLDE5LjE5NjQyOCBDIDI2LjgxMzUxMiwxOS4xOTY0MjggMjUuNjg4NTEyLDE3LjE5NjQyOCAyNS42ODg1MTIsMTQuNjk2NDI4IEMgMjUuNjg4NTEyLDEyLjE5NjQyOCAyNi44MTM1MTIsMTAuMTk2NDI4IDI4LjE4ODUxMiwxMC4xOTY0MjggQyAyOS41NjM1MTIsMTAuMTk2NDI4IDMwLjY4ODUxMiwxMi4xOTY0MjggMzAuNjg4NTEyLDE0LjY5NjQyOCB6ICIgaWQ9InBhdGg4NjE2IiBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lO3N0cm9rZS1taXRlcmxpbWl0OjQuMDAwMDAwMCIvPjwvZz48L2c+PC9zdmc+"></p>
 </div>
 
@@ -62,17 +63,20 @@ async function connect() {
 			const provider = await detectEthereumProvider();
 			if (provider) {
 				window.ethereum = provider;
-			} else if(IsPC()) {
-				alert("Your browser has not installed a wallet extension (like MetaMask).");
 			} else {
-				alert("Please open this page inside a mobile wallet App.");
+				var c = T("Please open this page inside a mobile wallet App.//请使用钱包APP内置浏览器打开本页面。")
+				if(IsPC()) {
+					c = T("Your browser has not installed a wallet extension (like MetaMask).//您的浏览器尚未安装钱包扩展（例如MetaMask）")
+				}
+				window.AlertDlg = new Attention.Alert({title: T("Warning//警告"), content: c});
+				return false;
 			}
 		}
 	}
 	window.accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
 	if (window.accounts.length == 0) {
-        	window.AlertDlg = new Attention.Alert({title: "Warning",
-        	  content: "Cannot connect to wallet"});
+        	window.AlertDlg = new Attention.Alert({title: T("Warning//警告"),
+        	  content: T("Cannot connect to wallet//无法连接钱包")});
 		return false;
 	}
 	return true;
@@ -85,10 +89,38 @@ function timestamp2string(timestamp) {
   return s.slice(0, s.length-3)
 }
 
+function T(text) {
+	try {
+		const twoStr = text.split("//");
+		if (window.LANG === "cn") {
+		    return twoStr[1];
+		}
+		return twoStr[0];
+	} catch (e) {
+		return text;
+	}
+}
+
 async function init() {
+	const url = new URL(location.href);
+
+	window.LANG = "en";
+	console.log(window.location.href);
+	if(url.searchParams.get("lang") == "cn") {
+		window.LANG = "cn";
+	} else if (url.searchParams.get("lang") == "en") {
+		window.LANG = "en";
+	} else if (navigator.language.startsWith("zh")) {
+		window.LANG = "cn";
+	}
+
 	if(!connect()) {return;}
 
-	const url = new URL(location.href);
+	var elems = document.querySelectorAll('*[data-T]');
+	for (var i = 0; i < elems.length; i++) {
+		elems[i].innerText = T(elems[i].innerText);
+	}
+
 	const user = url.searchParams.get("u");
 	const content = url.searchParams.get("c");
 	if(user && content) {
@@ -112,15 +144,21 @@ async function initUI(user, content) {
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const myAddr = await signer.getAddress();
+	const network = await provider.getNetwork();
+	if(network.chainId != 10000) {
+        	window.AlertDlg = new Attention.Alert({title: T("Incorrect Network//错误的链"),
+        	  content: T("You are not connecting to the smartBCH chain.//您连接的并未smartBCH链")});
+		return
+	}
 	if(!content) {
-		window.ERR = {title: "Warning",
-		  content: `Cannot find any hongbao for your accout ${myAddr}`}
+		window.ERR = {title: T("Warning//警告"),
+		  content: T(`Your accout ${myAddr} is not in the list of receivers//你的地址${myAddr} 不在红包的接收者列表中`)}
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		return
 	}
 	if(user != myAddr) {
-		window.ERR = {title: "Warning",
-		  content: `This hongbao is for ${user}, not your accout ${myAddr}`}
+		window.ERR = {title: T("Warning//警告"),
+		  content: T("This URL is not a hongbao for you//此网址并非给您发送的红包")}
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		return;
 	}
@@ -145,14 +183,21 @@ async function initUI(user, content) {
 	//console.log("rs", hongbao.r, hongbao.s)
 
 	const sep20Contract = new ethers.Contract(hongbao.coinType, SEP20ABI, provider)
-	const symbol = await sep20Contract.symbol()
-	const decimals = await sep20Contract.decimals()
+	try {
+		const symbol = await sep20Contract.symbol()
+		const decimals = await sep20Contract.decimals()
+	} catch(e) {
+		window.ERR = {title: T("Warning//警告"),
+		  content: T("Cannot access RPC server//无法访问RPC服务器")}
+        	window.AlertDlg = new Attention.Alert(window.ERR);
+		return;
+	}
 	const amt = ethers.utils.formatUnits(hongbao.amount, decimals)
 
 	const balanceAmt = await sep20Contract.balanceOf(hongbao.maker)
 	if(balanceAmt.lt(hongbao.amount)) {
-		window.ERR = {title: "Sender's balance is not enough",
-        	  content: "Sender's balance has been used up by other receivers and can't pay your hongbao now."};
+		window.ERR = {title: T("Sender's balance is not enough//发送者余额不足"),
+        	  content: T("Sender's balance has been used up by other receivers and can't pay your hongbao now.//发送者的余额已经被其他接收者支取一空，无法再支付您的红包")};
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("sad").style.display = "block"
 		return false;
@@ -160,8 +205,8 @@ async function initUI(user, content) {
 	
 	const dueTime = hongbao.dueTime.div(1000*1000*1000).toNumber() //picoseconds to microseconds
 	if(dueTime < Date.now()) {
-		window.ERR = {title: "Hongbao Expired",
-        	  content: "Sorry, but this hongbao was expired at "+timestamp2string(dueTime)};
+		window.ERR = {title: T("Hongbao Expired//红包过期"),
+        	  content: T("Sorry, but this hongbao was expired at //抱歉，此红包已于此时刻过期："+timestamp2string(dueTime))};
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("sad").style.display = "block"
 		return false;
@@ -176,8 +221,8 @@ async function initUI(user, content) {
 	//const b = await exhubContract.makerRDTHeadTail(hongbao.maker);
 	//console.log("b", b);
 	if(alreadyAccepted) {
-		window.ERR = {title: "Already Accepted",
-        	  content: "Sorry, but you have accepted this hongbao before"}
+		window.ERR = {title: T("Already Accepted//红包已接收"),
+        	  content: T("Sorry, but you have accepted this hongbao before//抱歉，您已经接收过此钱包")}
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("sad").style.display = "block"
 		return false;
@@ -195,8 +240,8 @@ async function recheckBalance() {
 	const sep20Contract = new ethers.Contract(HB.coinType, SEP20ABI, provider)
 	const balanceAmt = await sep20Contract.balanceOf(HB.maker)
 	if(balanceAmt.lt(HB.amount)) {
-		window.ERR = {title: "Sender's balance is not enough",
-        	  content: "Sender's balance has been used up by other receivers and can't pay your hongbao now."};
+		window.ERR = {title: T("Sender's balance is not enough//发送者余额不足"),
+        	  content: T("Sender's balance has been used up by other receivers and can't pay your hongbao now.//发送者的余额已经被其他接收者支取一空，无法再支付您的红包")};
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("open").style.display = "none"
 		document.getElementById("sad").style.display = "block"
@@ -226,6 +271,8 @@ async function getHongbao() {
 	const tx = await exhubContract.exchangeWithAgentSig("0x0", coinsToTaker, takerAddr_dueTime80_v8, HB.maker, HB.r, HB.s);
 	const receipt = await tx.wait();
 	console.log(receipt);
+	document.getElementById("open").style.display = "none"
+	document.getElementById("opened").style.display = "block"
 	return false;
 }
 
