@@ -316,7 +316,11 @@ async function generateURLs() {
 
 	const receivers = document.getElementById("receivers").value
 	const [addrList, invalidAddrList] = extractAddrList(receivers, sep20Addr)
-	document.getElementById("receivers").value = addrList.join("\n")
+	var addrText = ""
+	for(var i=0; i<addrList.length; i++) {
+		addrText += `${i+1}. ${addrList[i]}\n`
+	}
+	document.getElementById("receivers").value = addrText
 	if(invalidAddrList.length != 0) {
         	window.AlertDlg = new Attention.Alert({title: "Invalid Receivers' addresses",
 			content: `Found these receivers' addresses are invalid: ${invalidAddrList}`});
