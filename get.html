@@ -196,8 +196,8 @@ async function initUI(user, content) {
 	hongbao.amount = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(AmountStart, DueTimeStart)))
 	hongbao.dueTime = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(DueTimeStart, MakerAddrStart)))
 	hongbao.maker = ethers.utils.getAddress(ethers.utils.hexlify(u8arr.slice(MakerAddrStart, SigRStart)))
-	hongbao.r = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(SigRStart, SigSStart))).toHexString()
-	hongbao.s = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(SigSStart, SigVStart))).toHexString()
+	hongbao.r = ethers.utils.hexlify(u8arr.slice(SigRStart, SigSStart))
+	hongbao.s = ethers.utils.hexlify(u8arr.slice(SigSStart, SigVStart))
 	hongbao.v = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(SigVStart, WordsStart)))
 	//console.log("coinType", hongbao.coinType)
 	//console.log("amount", hongbao.amount.toHexString())
@@ -290,8 +290,7 @@ async function getHongbao() {
 	var coinsToTaker = ethers.BigNumber.from(HB.coinType).mul(twoPow96).add(HB.amount)
 	var takerAddr_dueTime80_v8 = ethers.BigNumber.from(HB.takerAddr).mul(twoPow80).add(HB.dueTime)
 	takerAddr_dueTime80_v8 = takerAddr_dueTime80_v8.mul(256).add(HB.v)
-	const tx = await exhubContract.exchangeWithAgentSig("0x0", coinsToTaker, takerAddr_dueTime80_v8, HB.maker, 
-			ethers.utils.zeroPad(HB.r, 32), ethers.utils.zeroPad(HB.s, 32));
+	const tx = await exhubContract.exchangeWithAgentSig("0x0", coinsToTaker, takerAddr_dueTime80_v8, HB.maker, HB.r, HB.s);
 	const receipt = await tx.wait();
 	console.log(receipt);
 	document.getElementById("open").style.display = "none"
