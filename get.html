@@ -207,15 +207,16 @@ async function initUI(user, content) {
 	//console.log("rs", hongbao.r, hongbao.s)
 	const url = new URL(location.href);
 	var decimals = url.searchParams.get("d");
-	if(decimals) {
+	var symbol = url.searchParams.get("sym");
+	if(decimals && symbol) {
 		var amt = ethers.utils.formatUnits(hongbao.amount, decimals)
 		document.getElementById("coins").innerText = amt+" "+symbol
 	}
 
 	const sep20Contract = new ethers.Contract(hongbao.coinType, SEP20ABI, provider)
 	try {
-		var symbol = await sep20Contract.symbol()
-		var decimals = await sep20Contract.decimals()
+		symbol = await sep20Contract.symbol()
+		decimals = await sep20Contract.decimals()
 	} catch(e) {
 		window.ERR = {title: T("Warning//警告"),
 		  content: T("Cannot access RPC server//无法访问RPC服务器")}
