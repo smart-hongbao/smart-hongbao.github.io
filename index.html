@@ -26,7 +26,7 @@
 	<input type="checkbox" id="checkBalance" checked><label for="checkBalance">Check your balance is enough for these hongbaos.</label></p>
 
 	<p>The receivers:<br>
-	<textarea id="receivers" class="input is-danger is-small" style="height: 160px" placeholder="Here you can enter any text containing HEX addresses, which will be extracted out automatically"></textarea></p>
+	<textarea id="receivers" class="input is-danger is-small" style="height: 160px" placeholder="Here you can enter any text containing HEX addresses, which will be extracted out automatically.&#10;If you leave here blank, one single hongbao URL for a non-specific receiver will be generated"></textarea></p>
 
 	<p>What do you want say to the receivers?<br>
 	<textarea id="words" class="input is-danger is-small" style="height: 100px">Best Wishes!</textarea></p>
@@ -48,10 +48,13 @@
 	>Deploy</button></center>
 	-->
 
-	<p>&nbsp;</p>
+	<p style="display: none" id="urlP">The Hongbao URL is:<br>
+	<pre id="url"></pre></p>
+
 <script>
 const MaxAmount = "0x0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
 const SEP206Address = "0x0000000000000000000000000000000000002711"
+const ZeroAddress = "0x0000000000000000000000000000000000000000"
 const Symbol2Addr = {
 	EBEN: "0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B",
 	FLEXUSD: "0x7b2B3C5308ab5b2a1d9a94d20D35CCDf61e05b72",
@@ -315,21 +318,25 @@ async function generateURLs() {
 	}
 
 	const receivers = document.getElementById("receivers").value
-	const [addrList, invalidAddrList] = extractAddrList(receivers, sep20Addr)
-	var addrText = ""
-	for(var i=0; i<addrList.length; i++) {
-		addrText += `${i+1}. ${addrList[i]}\n`
-	}
-	document.getElementById("receivers").value = addrText
-	if(invalidAddrList.length != 0) {
-        	window.AlertDlg = new Attention.Alert({title: "Invalid Receivers' addresses",
-			content: `Found these receivers' addresses are invalid: ${invalidAddrList}`});
-		return
-	}
-	if(addrList.length == 0) {
-        	window.AlertDlg = new Attention.Alert({title: "No Receiver",
-			content: "You didn't enter any receiver."});
-		return
+	if(receivers.length != 0) {
+		var [addrList, invalidAddrList] = extractAddrList(receivers, sep20Addr)
+		var addrText = ""
+		for(var i=0; i<addrList.length; i++) {
+			addrText += `${i+1}. ${addrList[i]}\n`
+		}
+		document.getElementById("receivers").value = addrText
+		if(invalidAddrList.length != 0) {
+			window.AlertDlg = new Attention.Alert({title: "Invalid Receivers' addresses",
+				content: `Found these receivers' addresses are invalid: ${invalidAddrList}`});
+			return
+		}
+		if(addrList.length == 0) {
+			window.AlertDlg = new Attention.Alert({title: "No Receiver",
+				content: "You didn't enter any receiver."});
+			return
+		}
+	} else {
+		var addrList = [ZeroAddress]
 	}
 	
 	const distr = document.getElementById("distr").value
@@ -364,14 +371,23 @@ async function generateURLs() {
 
 	const expireNanosecondsBN = ethers.BigNumber.from(expireTimestamp).mul(1000*1000*1000)
 	var expirePicosecondsBN = expireNanosecondsBN.add(Math.floor(Math.random()*1000*1000*1000)).mul(1000)
-	var urls = []
+	var urls = ""
 	var mapLines = []
 	for(var i=0; i<addrList.length; i++) {
 		const amtBN = ethers.utils.parseUnits(amountList[i], decimals)
 		const c = await signHongbao(hongbaoWallet, sep20Addr, addrList[i], amtBN, expirePicosecondsBN, myAddr, words)
+		if(addrList.length == 1 && addrList[0] == ZeroAddress) {
+			urls +=`https://hongbao.click/get?c=${c}`
+			break
+		}
 		urls +=`https://hongbao.click/get?u=${addrList[i]}&c=${c}\n\n`
 		mapLines += `"${addrList[i]}": "${c}",\n`
 		expirePicosecondsBN = expirePicosecondsBN.add(1)
+	}
+	if(addrList.length == 1 && addrList[0] == ZeroAddress) {
+		document.getElementById("urlP").style.display = "block"
+		document.getElementById("url").innerText = urls
+		return
 	}
 	var t = new Date().toISOString().substr(0,16).replace(":","")
 	new Attention.Confirm({title: "Download URL List",

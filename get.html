@@ -136,7 +136,7 @@ async function init() {
 
 	const user = url.searchParams.get("u");
 	const content = url.searchParams.get("c");
-	if(user && content) {
+	if(content) {
 		initUI(user, content)
 		return
 	}
@@ -175,7 +175,7 @@ async function initUI(user, content) {
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		return
 	}
-	if(user != myAddr) {
+	if(user && user != myAddr) {
 		window.ERR = {title: T("Warning//警告"),
 		  content: T("This URL is not a hongbao for you//此网址并非给您发送的红包")}
         	window.AlertDlg = new Attention.Alert(window.ERR);
@@ -188,6 +188,10 @@ async function initUI(user, content) {
 	const words = UTF8ArrToStr(u8arr.slice(WordsStart))
 
 	var hongbao={}
+	hongbao.takerAddr = myAddr
+	if(!user) {
+		hongbao.takerAddr = "0x0"
+	}
 	hongbao.coinType = ethers.utils.getAddress(ethers.utils.hexlify(u8arr.slice(CoinTypeStart, AmountStart)))
 	hongbao.amount = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(AmountStart, DueTimeStart)))
 	hongbao.dueTime = ethers.BigNumber.from(ethers.utils.hexlify(u8arr.slice(DueTimeStart, MakerAddrStart)))
@@ -279,13 +283,12 @@ async function getHongbao() {
 	recheckBalance()
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
-	const myAddr = await signer.getAddress();
 	const exhubContract = new ethers.Contract(ExHubAddress, ExHubABI, provider).connect(signer);
 
 	const twoPow80 = ethers.BigNumber.from(2).pow(80);
 	const twoPow96 = ethers.BigNumber.from(2).pow(96);
 	var coinsToTaker = ethers.BigNumber.from(HB.coinType).mul(twoPow96).add(HB.amount)
-	var takerAddr_dueTime80_v8 = ethers.BigNumber.from(myAddr).mul(twoPow80).add(HB.dueTime)
+	var takerAddr_dueTime80_v8 = ethers.BigNumber.from(HB.takerAddr).mul(twoPow80).add(HB.dueTime)
 	takerAddr_dueTime80_v8 = takerAddr_dueTime80_v8.mul(256).add(HB.v)
 	const tx = await exhubContract.exchangeWithAgentSig("0x0", coinsToTaker, takerAddr_dueTime80_v8, HB.maker, HB.r, HB.s);
 	const receipt = await tx.wait();
