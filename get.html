@@ -245,7 +245,7 @@ async function initUI(user, content) {
 	//console.log("b", b);
 	if(alreadyAccepted) {
 		window.ERR = {title: T("Already Accepted//红包已接收"),
-        	  content: T("Sorry, but this hongbao has been accepted before//抱歉，此钱包已经被领走")}
+        	  content: T("Sorry, but this hongbao has been accepted before//抱歉，此红包已经被领走")}
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("sad").style.display = "block"
 		return false;
