@@ -290,7 +290,8 @@ async function getHongbao() {
 	var coinsToTaker = ethers.BigNumber.from(HB.coinType).mul(twoPow96).add(HB.amount)
 	var takerAddr_dueTime80_v8 = ethers.BigNumber.from(HB.takerAddr).mul(twoPow80).add(HB.dueTime)
 	takerAddr_dueTime80_v8 = takerAddr_dueTime80_v8.mul(256).add(HB.v)
-	const tx = await exhubContract.exchangeWithAgentSig("0x0", coinsToTaker, takerAddr_dueTime80_v8, HB.maker, HB.r, HB.s);
+	const tx = await exhubContract.exchangeWithAgentSig("0x0", coinsToTaker, takerAddr_dueTime80_v8, HB.maker, 
+			ethers.utils.zeroPad(HB.r, 32), ethers.utils.zeroPad(HB.s, 32));
 	const receipt = await tx.wait();
 	console.log(receipt);
 	document.getElementById("open").style.display = "none"
