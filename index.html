@@ -379,7 +379,7 @@ async function generateURLs() {
 		const amtBN = ethers.utils.parseUnits(amountList[i], decimals)
 		const c = await signHongbao(hongbaoWallet, sep20Addr, addrList[i], amtBN, expirePicosecondsBN, myAddr, words)
 		if(addrList.length == 1 && addrList[0] == ZeroAddress) {
-			urls +=`https://hongbao.click/get?c=${c}`
+			urls +=`https://hongbao.click/get?d=${decimals}&c=${c}`
 			break
 		}
 		urls +=`https://hongbao.click/get?u=${addrList[i]}&c=${c}\n\n`
