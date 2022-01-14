@@ -186,6 +186,7 @@ async function initUI(user, content) {
 	//console.log("content", content)
 	//console.log("u8arr", u8arr)
 	const words = UTF8ArrToStr(u8arr.slice(WordsStart))
+	document.getElementById("words").innerText = words
 
 	var hongbao={}
 	hongbao.takerAddr = myAddr
@@ -216,6 +217,7 @@ async function initUI(user, content) {
 		return;
 	}
 	const amt = ethers.utils.formatUnits(hongbao.amount, decimals)
+	document.getElementById("coins").innerText = amt+" "+symbol
 
 	const balanceAmt = await sep20Contract.balanceOf(hongbao.maker)
 	if(balanceAmt.lt(hongbao.amount)) {
@@ -253,8 +255,6 @@ async function initUI(user, content) {
 
 	window.HB = hongbao
 	document.getElementById("open").style.display = "block"
-	document.getElementById("words").innerText = words
-	document.getElementById("coins").innerText = amt+" "+symbol
 }
 
 async function recheckBalance() {
