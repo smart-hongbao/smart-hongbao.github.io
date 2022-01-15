@@ -191,7 +191,7 @@ async function initUI(user, content) {
 	var decimals = url.searchParams.get("d");
 	var symbol = url.searchParams.get("sym");
 	if(decimals && symbol) {
-		var amt = ethers.utils.formatUnits(hongbao.amount, decimals)
+		var amt = ethers.utils.formatUnits(hongbao.amount, decimals)*1.0
 		document.getElementById("coins").innerText = amt+" "+symbol
 	}
 
@@ -226,7 +226,7 @@ async function initUI(user, content) {
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		return;
 	}
-	amt = ethers.utils.formatUnits(hongbao.amount, decimals)
+	amt = ethers.utils.formatUnits(hongbao.amount, decimals)*1.0
 	document.getElementById("coins").innerText = amt+" "+symbol
 
 	const balanceAmt = await sep20Contract.balanceOf(hongbao.maker)

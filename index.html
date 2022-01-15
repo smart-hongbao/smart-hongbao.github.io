@@ -269,8 +269,8 @@ async function generateURLs() {
 	try {
 		const balanceAmt = await sep20Contract.balanceOf(myAddr)
 		const allowanceAmt = await sep20Contract.allowance(myAddr, ExHubAddress)
-		var balance = ethers.utils.formatUnits(balanceAmt, decimals)
-		var allowance = ethers.utils.formatUnits(allowanceAmt, decimals)
+		var balance = ethers.utils.formatUnits(balanceAmt, decimals)*1.0
+		var allowance = ethers.utils.formatUnits(allowanceAmt, decimals)*1.0
 	} catch(e) {
         	console.log(sep20Addr, e)
         	window.AlertDlg = new Attention.Alert({title: "Non-SEP20 Address",
