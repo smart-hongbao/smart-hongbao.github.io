@@ -154,7 +154,14 @@ async function init() {
 	window.addEventListener('message', function(event) {
 		if(event.data.event_id && event.data.event_id == "hongbao_cors_message") {
 			clearTimeout(timer)
-			initUI(myAddr, event.data.hb_map[myAddr])
+			var content = event.data.hb_map[myAddr]
+			if(!content) {
+				window.ERR = {title: T("Warning//警告"),
+				  content: T(`Your accout ${myAddr} is not in the list of receivers//你的地址${myAddr} 不在红包的接收者列表中`)}
+				window.AlertDlg = new Attention.Alert(window.ERR);
+				return
+			}
+			initUI(myAddr, content)
 		}
 	});
 }
@@ -195,12 +202,6 @@ async function initUI(user, content) {
 	if(network.chainId != 10000) {
         	window.AlertDlg = new Attention.Alert({title: T("Incorrect Network//错误的链"),
         	  content: T("You are not connecting to the smartBCH chain.//您连接的并未smartBCH链")});
-		return
-	}
-	if(!content) {
-		window.ERR = {title: T("Warning//警告"),
-		  content: T(`Your accout ${myAddr} is not in the list of receivers//你的地址${myAddr} 不在红包的接收者列表中`)}
-        	window.AlertDlg = new Attention.Alert(window.ERR);
 		return
 	}
 	if(user && user != myAddr) {
