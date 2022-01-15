@@ -15,7 +15,8 @@
 	<div style="position:absolute; top: 0px; left: 0px">
 		<img src="assets/favicon.svg" style="width:380px; height: auto">
 	</div>
-	<p style="position:absolute; width:380px; top: 68px; left: 0px; text-align: center; font-size: 30px; color: gold" id="coins"></p>
+	<p style="position:absolute; width:380px; top: 0px; left: 0px; text-align: center; font-size: 30px; display: none" id="logoP"><a href="#" onclick="return watchAsset();"><img style="width: 60px; height: auto" id="logo" src=""></a></p>
+	<p style="position:absolute; width:380px; top: 72px; left: 0px; text-align: center; font-size: 30px; color: gold" id="coins"></p>
 	<p style="position:absolute; width:380px; top: 352px; left: 0px; text-align: center; font-size: 30px; color: gold; white-space: pre; word-wrap:break-word; white-space:pre-wrap;" id="words"></p>
 	<p style="position:absolute; width:380px; top: 212px; left: 0px; text-align: center; font-size: 30px; display: none; color: white" id="opened"><span data-T>opened//已领取</span></p>
 	<p style="position:absolute; width:380px; top: 212px; left: 0px; text-align: center; font-size: 30px; display: none" id="open"><a href="#" onclick="return getHongbao()" style="color: yellow;" data-T>OPEN!//打开!</a></p>
@@ -50,6 +51,26 @@ const ExHubABI = [
 "function makerRDTHeadTail(address maker) external view returns (uint)",
 ]
 
+const Symbol2Addr = {
+	EBEN: "0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B",
+	FLEXUSD: "0x7b2B3C5308ab5b2a1d9a94d20D35CCDf61e05b72",
+	MIST: "0x5fA664f69c2A4A3ec94FaC3cBf7049BD9CA73129",
+	LAW: "0x0b00366fBF7037E9d75E4A569ab27dAB84759302",
+	TANGO: "0x73BE9c8Edf5e951c9a0762EA2b1DE8c8F38B5e91",
+	"$CATS": "0x265bD28d79400D55a1665707Fa14A72978FA6043",
+	DAIQUIRI: "0x24d8d5Cbc14FA6A740c3375733f0287188F8dF3b",
+	CLY: "0x7642Df81b5BEAeEb331cc5A104bd13Ba68c34B91",
+	BPAD: "0x9192940099fDB2338B928DE2cad9Cd1525fEa881",
+	JOY: "0x6732E55Ac3ECa734F54C26Bd8DF4eED52Fb79a6E",
+	BURN: "0xc07545D17e716CF7FF24ed0eb16A69157A33aaCd",
+	FLEX: "0x98Dd7eC28FB43b3C4c770AE532417015fa939Dd3",
+	CLK: "0x659F04F36e90143fCaC202D4BC36C699C078fC98",
+	ORB: "0xff3ed63bf8bc9303ea0a7e1215ba2f82d569799e",
+	SPICE: "0xe11829a7d5d8806bb36e118461a1012588fafd89",
+	DAO: "0xca0235058985fcc1839e9e37c10900a73c126708",
+	ARG: "0x675E1d6FcE8C7cC091aED06A68D079489450338a",
+	MILK: "0xc8E09AEdB3c949a875e1FD571dC4b3E48FB221f0",
+}
 
 function IsPC() {
        var userAgentInfo = navigator.userAgent;
@@ -200,8 +221,12 @@ async function initUI(user, content) {
 	const myAddr = await signer.getAddress();
 	const network = await provider.getNetwork();
 	if(network.chainId != 10000) {
-        	window.AlertDlg = new Attention.Alert({title: T("Incorrect Network//错误的链"),
-        	  content: T("You are not connecting to the smartBCH chain.//您连接的并未smartBCH链")});
+		new Attention.Confirm({title: T("Incorrect Network//错误的链"),
+			content: T("You are not connecting to the smartBCH chain. Do you want to add smartBCH?//您连接的并未smartBCH链，请将smartBCH加入您的钱包。"),
+			onConfirm(component) {
+				addSmartBCH()
+			},
+			onCancel(component) {}});
 		return
 	}
 	if(user && user != myAddr) {
@@ -226,8 +251,14 @@ async function initUI(user, content) {
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		return;
 	}
+	hongbao.symbol = symbol
+	hongbao.decimals = decimals
 	amt = ethers.utils.formatUnits(hongbao.amount, decimals)*1.0
 	document.getElementById("coins").innerText = amt+" "+symbol
+	if(Symbol2Addr[symbol] == hongbao.coinType) {
+		document.getElementById("logoP").style.display = "block"
+		document.getElementById("logo").src = "/logo/"+symbol+".png"
+	}
 
 	const balanceAmt = await sep20Contract.balanceOf(hongbao.maker)
 	if(balanceAmt.lt(hongbao.amount)) {
@@ -267,9 +298,27 @@ async function initUI(user, content) {
 	document.getElementById("open").style.display = "block"
 }
 
+function addSmartBCH() {
+	window.ethereum.request({
+	  method: 'wallet_addEthereumChain',
+	  params: [{
+	    "chainId": "0x2710",
+	    "chainName": "smartBCH",
+	    "rpcUrls": ["https://smartbch.fountainhead.cash/mainnet"],
+	    "nativeCurrency": {
+	      "name": "smart BCH",
+	      "symbol": "BCH",
+	      "decimals": 18
+	    },
+	    "blockExplorerUrls": ["https://www.smartscan.cash"]
+	  }],
+	});
+}
+
 async function recheckBalance() {
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
+	const myAddr = await signer.getAddress();
 	const sep20Contract = new ethers.Contract(HB.coinType, SEP20ABI, provider)
 	const balanceAmt = await sep20Contract.balanceOf(HB.maker)
 	if(balanceAmt.lt(HB.amount)) {
@@ -280,6 +329,22 @@ async function recheckBalance() {
 		document.getElementById("sad").style.display = "block"
 		return false;
 	}
+}
+
+function watchAsset() {
+	ethereum.request({
+	  method: 'wallet_watchAsset',
+	  params: {
+	    type: 'ERC20',
+	    options: {
+	      address: HB.coinType,
+	      symbol: HB.symbol,
+	      decimals: HB.decimals,
+	      img: "https://hongbao.click/logo/"+HB.symbol+".png",
+	    },
+	  },
+	});
+	return false;
 }
 
 async function getHongbao() {
