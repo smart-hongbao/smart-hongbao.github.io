@@ -259,6 +259,7 @@ async function initUI(user, content) {
 		document.getElementById("logoP").style.display = "block"
 		document.getElementById("logo").src = "/logo/"+symbol+".png"
 	}
+	window.HB = hongbao
 
 	const balanceAmt = await sep20Contract.balanceOf(hongbao.maker)
 	if(balanceAmt.lt(hongbao.amount)) {
@@ -294,7 +295,6 @@ async function initUI(user, content) {
 		return false;
 	}
 
-	window.HB = hongbao
 	document.getElementById("open").style.display = "block"
 }
 
