@@ -26,7 +26,7 @@
 	<input type="checkbox" id="checkBalance" checked><label for="checkBalance">Check your balance is enough for these hongbaos.</label></p>
 
 	<p>The receivers:<br>
-	<textarea id="receivers" class="input is-danger is-small" style="height: 160px" placeholder="Here you can enter any text containing HEX addresses, which will be extracted out automatically.&#10;If you leave here blank, one single hongbao URL for a non-specific receiver will be generated"></textarea></p>
+	<textarea id="receivers" class="input is-danger is-small" style="height: 160px" placeholder="Here you can enter any text containing HEX addresses, which will be extracted out automatically.&#10;If you enter a number N here, then N hongbao URLs for non-specific receivers will be generated"></textarea></p>
 
 	<p>What do you want say to the receivers?<br>
 	<textarea id="words" class="input is-danger is-small" style="height: 100px">Best Wishes!</textarea></p>
@@ -325,8 +325,16 @@ async function generateURLs() {
 		return
 	}
 
-	const receivers = document.getElementById("receivers").value
-	if(receivers.length != 0) {
+	var pattern = /^\d+$/;
+	var receivers = document.getElementById("receivers").value
+	if(receivers.trim().length == 0) {
+		receivers = "1"
+	}
+	var nonSpecificReceivers = false
+	if(pattern.test(receivers.trim())) { // is a number
+		var addrList = new Array(receivers*1).fill(ZeroAddress)
+		nonSpecificReceivers = true
+	} else {
 		var [addrList, invalidAddrList] = extractAddrList(receivers, sep20Addr)
 		var addrText = ""
 		for(var i=0; i<addrList.length; i++) {
@@ -343,8 +351,6 @@ async function generateURLs() {
 				content: "You didn't enter any receiver."});
 			return
 		}
-	} else {
-		var addrList = [ZeroAddress]
 	}
 	
 	const distr = document.getElementById("distr").value
@@ -384,11 +390,11 @@ async function generateURLs() {
 	for(var i=0; i<addrList.length; i++) {
 		const amtBN = ethers.utils.parseUnits(amountList[i], decimals)
 		const c = await signHongbao(hongbaoWallet, sep20Addr, addrList[i], amtBN, expirePicosecondsBN, myAddr, words)
-		if(addrList.length == 1 && addrList[0] == ZeroAddress) {
-			urls +=`https://hongbao.click/get?d=${decimals}&sym=${symbol}&c=${c}`
-			break
+		if(addrList[i] == ZeroAddress) {
+			urls +=`https://hongbao.click/get?d=${decimals}&sym=${symbol}&c=${c}\n\n`
+		} else {
+			urls +=`https://hongbao.click/get?u=${addrList[i]}&c=${c}\n\n`
 		}
-		urls +=`https://hongbao.click/get?u=${addrList[i]}&c=${c}\n\n`
 		mapLines += `"${addrList[i]}": "${c}",\n`
 		expirePicosecondsBN = expirePicosecondsBN.add(1)
 	}
@@ -404,6 +410,9 @@ async function generateURLs() {
 			saveTxt("hongbao"+t+".txt", urls)
 		},
 		onCancel(component) {}});
+	if(nonSpecificReceivers) {
+		return
+	}
 	new Attention.Confirm({title: "Download HTML File",
 		content: "Do you want to download a html which help the receivers to get hongbao?",
 		onConfirm(component) {
