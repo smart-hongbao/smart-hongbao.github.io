@@ -107,8 +107,12 @@ async function connect() {
 			}
 		}
 	}
-	window.accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
-	if (window.accounts.length == 0) {
+	try {
+		window.accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+	} catch (e) {
+		console.log(e)
+	}
+	if (!window.accounts || window.accounts.length == 0) {
         	window.AlertDlg = new Attention.Alert({title: T("Warning//警告"),
         	  content: T("Cannot connect to wallet//无法连接钱包")});
 		return false;
@@ -148,7 +152,7 @@ async function init() {
 		window.LANG = "cn";
 	}
 
-	connect()
+	await connect()
 
 	var elems = document.querySelectorAll('*[data-T]');
 	for (var i = 0; i < elems.length; i++) {
