@@ -167,7 +167,7 @@ async function getSEP20AddrAndSymbolAndDecimals(line) {
       }
       if(!trimmed.startsWith("0x") || trimmed.length < 10) {//not hex address, so it is a symbol
          const hexAddr = localStorage.getItem("coin-"+trimmed)
-	 if(trimmed === null) {
+	 if(hexAddr === null) {
            window.AlertDlg = new Attention.Alert({title: "Unknow Coin",
            content: `Cannot find ${trimmed}'s address in history, Please specify its address directly.`});
 	   return [null, null, null]
