@@ -290,9 +290,9 @@ async function generateURLs() {
         	  content: "Expire date must be later than now"});
 		return
 	}
-	if(expireDate > Date.now() + 3*24*3600*1000) {
+	if(expireDate > Date.now() + 10*24*3600*1000) {
         	window.AlertDlg = new Attention.Alert({title: "Invalid Expire Date",
-        		content: "Expire date must be within 3 days."});
+        		content: "Expire date must be within 10 days."});
 		return
 	}
 	const expireTimestamp =  Math.floor(expireDate / 1000)
