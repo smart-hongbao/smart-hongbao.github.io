@@ -1,0 +1,16 @@
+<html><body><script>const url = new URL(location.href);
+		const msg = url.searchParams.get("msg");
+		if(msg) {
+		window.parent.postMessage(
+		    {
+			event_id: "hongbao_cors_message",
+			hb_map: {"0x5637c9fbFf9FAf5f534d0a88199feCD97357635B": "AAAAAAAAAAAAAAAAAAAAAAAAACcRAAAAAAAAZAte7OAAAFkbEUtopn-jcAXdiSXb7wrs7FtoAyoGkQdqkupBxCclLMtXnUVGgieJlVTTIEfpTpRX7Adkt4JBhVnwjb1XvHDdzCZJEvj_2L8cqLYcFD8Fj-W7rlB_xIFujiBR7RvliqDmsrlzbWFydEJDSO-8gQ==",
+"0xDB69eA1D5F7361CB666003bfA5920BE8dBdf8848": "AAAAAAAAAAAAAAAAAAAAAAAAACcRAAAAAAAAZAte7OAAAFkbEUtopn-jcQXdiSXb7wrs7FtoAyoGkQdqkupBWGMGMSOjZ-0rq3ob_yAgGBEme61JIWx-JJ6ngiOgfP8a04nTpONBHt7vh05ni6LXL0lv1IW3xuQhKOIlF8wXdxvliqDmsrlzbWFydEJDSO-8gQ==",
+"0xd7c6c582824A0e073E6a7a0B60C9442d71BA44aA": "AAAAAAAAAAAAAAAAAAAAAAAAACcRAAAAAAAAZAte7OAAAFkbEUtopn-jcgXdiSXb7wrs7FtoAyoGkQdqkupB0-XLFHQEOMKoQ_2kwtTG0rqiJ-SK25otzfjtjcDx-2dQ_er9c8kC0xYrEcELCrMbnzRs9wsdrnO4GskEXuSv8hzliqDmsrlzbWFydEJDSO-8gQ==",
+	}
+		    },
+		    "*"
+		);
+		} else {
+		const url = "https://hongbao.click/get?s="+encodeURIComponent(window.location.href)
+		window.location.href = url} </script></body></html>
