@@ -317,7 +317,7 @@ async function generateURLs() {
 			content: `Your ${symbol} balance is ${balance}, less than ${totalAmount}`});
 		return
 	}
-	if(sep20Addr != SEP206Address && allowance < totalAmount) {
+	if(allowance < totalAmount) {
 		new Attention.Confirm({title: `Approve ${symbol}`,
 			content: `You did not approve enough ${symbol} to hongbao.click, do you want to approve now? After sending the approving transaction, you can retry generating hongbao.`,
 			onConfirm(component) {
