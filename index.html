@@ -363,6 +363,11 @@ async function generateURLs() {
 			var amt = totalAmount/addrList.length;
 			amountList.push(amt.toFixed(fixedDigits))
 		}
+	} else if(totalAmount < addrList.length*100) { // bypass a bug of randArray
+		amountList = randArray(addrList.length, totalAmount*100000, fixedDigits)
+		for(var i=0; i<amountList.length; i++) {
+			amountList[i] = (amountList[i]/100000.0).toFixed(fixedDigits)
+		}
 	} else {
 		amountList = randArray(addrList.length, totalAmount, fixedDigits)
 	}
