@@ -380,7 +380,10 @@ async function getHongbao() {
 window.onload = init;
 
 document.onclick = function() {
-	if(window.AlertDlg) window.AlertDlg.destroy();
+	if(window.AlertDlg) {
+		window.AlertDlg.destroy();
+		delete window.AlertDlg;
+	}
 }
 
 </script>
