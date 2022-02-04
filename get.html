@@ -273,15 +273,6 @@ async function initUI(user, content) {
 		document.getElementById("sad").style.display = "block"
 		return false;
 	}
-	
-	const dueTime = hongbao.dueTime.div(1000*1000*1000).toNumber() //picoseconds to microseconds
-	if(dueTime < Date.now()) {
-		window.ERR = {title: T("Hongbao Expired//红包过期"),
-        	  content: T("Sorry, but this hongbao was expired at //抱歉，此红包已于此时刻过期：")+timestamp2string(dueTime)};
-        	window.AlertDlg = new Attention.Alert(window.ERR);
-		document.getElementById("sad").style.display = "block"
-		return false;
-	}
 
 	const exhubContract = new ethers.Contract(ExHubAddress, ExHubABI, provider);
 	var alreadyAccepted = await exhubContract.isReplay(hongbao.maker, hongbao.dueTime);
@@ -294,6 +285,15 @@ async function initUI(user, content) {
 	if(alreadyAccepted) {
 		window.ERR = {title: T("Already Accepted//红包已被接收"),
         	  content: T("Sorry, but this hongbao has been accepted before//抱歉，此红包已经被领走")}
+        	window.AlertDlg = new Attention.Alert(window.ERR);
+		document.getElementById("sad").style.display = "block"
+		return false;
+	}
+	
+	const dueTime = hongbao.dueTime.div(1000*1000*1000).toNumber() //picoseconds to microseconds
+	if(dueTime < Date.now()) {
+		window.ERR = {title: T("Hongbao Expired//红包过期"),
+        	  content: T("Sorry, but this hongbao was expired at //抱歉，此红包已于此时刻过期：")+timestamp2string(dueTime)};
         	window.AlertDlg = new Attention.Alert(window.ERR);
 		document.getElementById("sad").style.display = "block"
 		return false;
